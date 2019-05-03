@@ -1,2 +1,4 @@
-
-incoming/.ipynb_checkpoints/prep-checkpoint.ipynb
+.DS_Store
+node_modules
+public/bundle.*
+prep/.ipynb_checkpoints
