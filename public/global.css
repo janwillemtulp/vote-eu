@@ -5,8 +5,8 @@ html, body {
 }
 
 body {
-	color: #0277BD;
-	background-color: rgb(227, 237, 245);
+	color: #333;
+	background-color: rgb(219, 219, 219);
 	margin: 0;
 	padding: 8px;
 	box-sizing: border-box;

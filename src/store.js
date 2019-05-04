@@ -5,6 +5,8 @@ export const data = writable([])
 
 export const selectedCountry = writable('NL')
 
+export const selectedAnswers = writable(new Array(22))
+
 export const allCountryCodes = derived(
   data,
   data => [...new Set(data.map(d => d.country_code))]
@@ -49,6 +51,17 @@ export const activeParties = derived(
 export const activeAnswers = derived(
   activeData,
   activeData => rollup(activeData,
+    v => v.reduce((acc, cur) => {
+      acc.push(cur.party_id)
+      return acc
+    }, []),
+    d => d.question_id,
+    d => d.answer)
+)
+
+export const allAnswers = derived(
+  data,
+  data => rollup(data, 
     v => v.reduce((acc, cur) => {
       acc.push(cur.party_id)
       return acc
