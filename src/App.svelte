@@ -4,6 +4,8 @@
   import {
     data,
     selectedCountry,
+    selectedParty,
+    selectedAnswers,
     activeData,
     activeQuestions,
     activeParties,
@@ -20,6 +22,14 @@
     await csv("./data/data.csv", row => ({
       ...row,
       answer: parse(row.answer),
+      simplifiedAnswer:
+        parse(row.answer) === null
+          ? null
+          : parse(row.answer) < 50
+          ? 0
+          : parse(row.answer) > 50
+          ? 100
+          : 50,
       economic_liberalisation: parse(row.economic_liberalisation),
       environmental_protection: parse(row.environmental_protection),
       european_integration: parse(row.european_integration),
@@ -37,26 +47,23 @@
       console.log(res, $activeAnswers);
     });
   }
+
+  function setSelectedCountry(code) {
+    console.log(code);
+    $selectedCountry = code;
+    $selectedAnswers = new Array(22);
+  }
 </script>
 
 <style>
-  .answer {
-    margin-right: 5px;
-    font-size: 11px;
-    font-style: italic;
-    font-weight: bold;
-  }
-
-  .question {
-    width: 600px;
-    display: inline-block;
-    text-align: right;
-  }
-
   button {
     border: none;
     border-radius: 0;
     width: 30px;
+  }
+
+  img {
+    cursor: pointer;
   }
 </style>
 
@@ -71,7 +78,7 @@
   {#each $allCountryCodes as code}
     <button
       style="background-color: {$selectedCountry === code ? 'orange' : '#ddd'}"
-      on:click={() => ($selectedCountry = code)}>
+      on:click={() => setSelectedCountry(code)}>
       {code}
     </button>
   {/each}
@@ -79,26 +86,13 @@
 
 <div>
   {#each $activeParties as party}
-    <!-- <span style="margin-right: 10px;">{party.name_short}</span> -->
     <img
       src={party.image}
       alt={party.name_long}
       height="30"
-      style="margin-right: 5px;" />
+      style="margin-right: 5px;"
+      on:click={() => ($selectedParty = $selectedParty === party.id ? undefined : party.id)} />
   {/each}
 </div>
 
 <Svg />
-
-<!-- {#each $activeQuestions as question}
-	<p style="margin: 0; height: 40px;">
-		<span class="question">{question.text}</span>
-		{#each answerValues as answer, i}
-			{#if $activeAnswers.get(question.id).has(answer.value)}
-				<span style="display: inline-block; height: 20px; width: {$activeAnswers.get(question.id).get(answer.value).length / $activeParties.length * 400}px; background-color: {answer.color};"></span>
-			{:else}
-				<span style="display: inline-block; height: 20px; width: 0px; background-color: {answer.color};"></span>
-			{/if}
-		{/each}
-	</p>
-{/each} -->
