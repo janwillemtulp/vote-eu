@@ -10,7 +10,8 @@
     activeQuestions,
     activeParties,
     activeAnswers,
-    allCountryCodes
+    allCountryCodes,
+    allCountries
   } from "./store.js";
   import Svg from "./Svg.svelte";
 
@@ -41,10 +42,16 @@
       restrictive_financial_policy: parse(row.restrictive_financial_policy),
       restrictive_immigration_policy: parse(row.restrictive_immigration_policy),
       xy_lc: parse(row.xy_lc),
-      xy_lr: parse(row.xy_lr)
+      xy_lr: parse(row.xy_lr),
+      country_code: ["VL", "WA"].includes(row.country_code)
+        ? "BE"
+        : row.country_code,
+      country_name: ["VL", "WA"].includes(row.country_code)
+        ? "Belgium"
+        : row.country_name
     })).then(res => {
       $data = res;
-      console.log(res, $activeAnswers);
+      console.log(res);
     });
   }
 
@@ -53,6 +60,8 @@
     $selectedCountry = code;
     $selectedAnswers = new Array(22);
   }
+
+  $: console.log($allCountries);
 </script>
 
 <style>
@@ -75,11 +84,12 @@
 {/await}
 
 <div>
-  {#each $allCountryCodes as code}
+  {#each $allCountries as country}
     <button
-      style="background-color: {$selectedCountry === code ? 'orange' : '#ddd'}"
-      on:click={() => setSelectedCountry(code)}>
-      {code}
+      class="bg-blue"
+      style="background-color: {$selectedCountry.code === country.code ? 'orange' : '#ddd'}"
+      on:click={() => setSelectedCountry(country)}>
+      {country.code}
     </button>
   {/each}
 </div>
@@ -94,5 +104,7 @@
       on:click={() => ($selectedParty = $selectedParty === party.id ? undefined : party.id)} />
   {/each}
 </div>
+
+<h1>{$selectedCountry.name}</h1>
 
 <Svg />
