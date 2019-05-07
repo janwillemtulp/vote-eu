@@ -147,14 +147,14 @@
                   cur,
                   cur
                 ]), []))}
-          style="stroke: {!isFilteredParty(party) ? '#ccc' : party.liberalConservative < 50 ? 'purple' : 'green'}; fill: none; stroke-width: {isFilteredParty(party) ? 2 : 1};" />
+          style="stroke: {!isFilteredParty(party) ? '#ccc' : party.liberalConservative < 50 ? 'black' : 'black'}; fill: none; stroke-dasharray: {isFilteredParty(party) ? 'none' : '2 2'};" />
       {/each}
     </g>
     {#each $activeQuestions as question, i}
       <g transform="translate({400 - 5}, {i * 2 * rowHeight})">
         <text
           dy={-rowHeight / 2}
-          style="dominant-baseline: middle; text-anchor: end;">
+          style="dominant-baseline: middle; text-anchor: end; font-size: 16px; color: #555;">
           {question.text}
         </text>
         {#each answerValues as answer, j}
@@ -180,7 +180,14 @@
                   {$selectedCountry.name}
                 </tspan>
                 <tspan x={(13 * barWidth) / 2} y={-14 - 1 * 17}>
-                  won't have this opinion,
+                  <!-- won't have this opinion, -->
+                  {#if answer.value === 0}
+                    won't disagree
+                  {:else if answer.value === 50}
+                    won't have a neutral opinion
+                  {:else}
+                    won't agree
+                  {/if}
                 </tspan>
                 <tspan x={(13 * barWidth) / 2} y={-14 - 0 * 17}>
                   despite the outcome

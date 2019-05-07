@@ -14,6 +14,8 @@
   } from "./store.js";
   import Svg from "./Svg.svelte";
 
+	let innerWidth = 0
+	let innerHeight = 0
   let promise = loadData();
 
   const parse = attribute => (attribute === "" ? null : +attribute);
@@ -72,8 +74,15 @@
 
   img {
     cursor: pointer;
-  }
+	}
+	
+	.main-container {
+		overflow: scroll;
+		width: 1200px;
+	}
 </style>
+
+<svelte:window bind:innerWidth bind:innerHeight />
 
 {#await promise}
   <p>...loading data</p>
@@ -106,4 +115,11 @@
 
 <h1>{$selectedCountry.name}</h1>
 
-<Svg />
+<div class="main-container" style="height: {innerHeight - 200}px;">
+	<Svg />
+</div>
+
+<footer>
+<p>concept & design by TULP interactive &copy;2019</p>
+</footer>
+
