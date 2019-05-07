@@ -22,7 +22,7 @@
 
   let x;
   let maxWidth = 400 / answerValues.length;
-  let rowHeight = 60;
+  let rowHeight = 80;
   let barWidth = 10;
   let margin = 20;
 
@@ -30,7 +30,7 @@
     .domain([0, answerValues.length])
     .range([
       0,
-      12 * barWidth * answerValues.length + answerValues.length * margin
+      13 * barWidth * answerValues.length + answerValues.length * margin
     ]);
 
   $: filteredParties = $activeParties.filter(d =>
@@ -50,7 +50,7 @@
       !question.has(0) &&
       !question.has(25)
     ) {
-      return "orange";
+      return "#FED8B1";
     }
 
     if (
@@ -58,12 +58,12 @@
       !question.has(100) &&
       !question.has(75)
     ) {
-      return "orange";
+      return "#FED8B1";
     }
 
-    // if ([50].includes(answerValue) && !question.has(50)) {
-    //   return "orange";
-    // }
+    if ([50].includes(answerValue) && !question.has(50)) {
+      return "#FED8B1";
+    }
 
     return "#eee";
   }
@@ -137,7 +137,7 @@
   }
 </script>
 
-<svg width="1200" height="3000">
+<svg width="1200" height="3500">
   <g transform="translate(50, 100)">
     <g transform="translate(400, 0)">
       {#each filteredParties as party, i}
@@ -162,27 +162,28 @@
             transform="translate({10 + x(j)}, 0)"
             on:click={() => toggleAnswer(i, answer.value, question.id)}>
             <rect
+              x={-barWidth}
               y={-rowHeight}
-              width={13 * barWidth}
+              width={2 * barWidth + 13 * barWidth}
               height={rowHeight - 2}
               style="opacity: 0.5; fill: {$selectedAnswers[i] && $selectedAnswers[i].simplifiedAnswer === answer.value ? answer.color : getBackgroundColor(question.id, answer.value)}; stroke: #ccc;" />
             {#if !$activeAnswers
               .get(question.id)
-              .has(answer.value) && [100, 0].includes(answer.value)}
+              .has(answer.value) && [100, 50, 0].includes(answer.value)}
               <text
-                style="font-size: 12px; text-anchor: middle; fill: hsl(39, 100%, 40%);">
-                <tspan x={(13 * barWidth) / 2} y={-7 - 3 * 13}>
-                  {$selectedCountry.seats}
-                  seats
+                style="font-size: 12px; text-anchor: middle; fill: hsl(30, 97%, 60%); dominant-baseline: middle;">
+                <tspan x={(13 * barWidth) / 2} y={-14 - 3 * 17}>
+                  <tspan style="font-size: 16px;">{$selectedCountry.seats}</tspan>
+                  seats representing
                 </tspan>
-                <tspan x={(13 * barWidth) / 2} y={-7 - 2 * 13}>
-                  representing
-                </tspan>
-                <tspan x={(13 * barWidth) / 2} y={-7 - 1 * 13}>
+                <tspan x={(13 * barWidth) / 2} y={-14 - 2 * 17}>
                   {$selectedCountry.name}
                 </tspan>
-                <tspan x={(13 * barWidth) / 2} y={-7 + 0 * 13}>
-                  won't have this opinion
+                <tspan x={(13 * barWidth) / 2} y={-14 - 1 * 17}>
+                  won't have this opinion,
+                </tspan>
+                <tspan x={(13 * barWidth) / 2} y={-14 - 0 * 17}>
+                  despite the outcome
                 </tspan>
               </text>
             {/if}

@@ -10,7 +10,6 @@
     activeQuestions,
     activeParties,
     activeAnswers,
-    allCountryCodes,
     allCountries
   } from "./store.js";
   import Svg from "./Svg.svelte";
