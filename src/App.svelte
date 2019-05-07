@@ -13,7 +13,7 @@
     allCountries,
     opinionBlocks
   } from "./store.js";
-  import Svg from "./Svg.svelte";
+  import Svg2 from "./Svg2.svelte";
 
   let innerWidth = 0;
   let innerHeight = 0;
@@ -160,7 +160,7 @@
       </p>
     {/each}
   </div>
-  <Svg />
+  <Svg2 />
 </div>
 
 <footer>
