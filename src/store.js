@@ -135,6 +135,18 @@ export const opinionBlocks = derived(activeData, activeData =>
   }, [])
 );
 
+export const allParties = derived(opinionBlocks, opinionBlocks =>
+  opinionBlocks.reduce((acc, cur) => {
+    cur.parties.forEach(c => {
+      if (!acc.find(d => d.id === c.id)) {
+        acc.push(c);
+      }
+    });
+
+    return acc;
+  }, [])
+);
+
 export const activeQuestions = derived(activeData, activeData =>
   activeData.reduce((acc, cur) => {
     if (!acc.map(d => d.id).includes(cur.question_id)) {
