@@ -6,7 +6,8 @@
     selectedAnswers,
     selectedParty,
     selectedCountry,
-    filteredAnswers
+    filteredAnswers,
+    filteredParties as tmp
   } from "./store.js";
   import { scaleLinear } from "d3-scale";
   import { line, curveMonotoneY } from "d3-shape";
@@ -41,6 +42,7 @@
   $: console.log("activeAnswers", $activeAnswers);
   // $: console.log("selectedAnswers", $selectedAnswers);
   $: console.log("filteredAnswers", $filteredAnswers);
+  $: console.log("filteredParties", $tmp);
 
   function getBackgroundColor(questionId, answerValue) {
     const question = $activeAnswers.get(questionId);
@@ -104,8 +106,8 @@
 
       return (
         5 +
+        barWidth +
         x(answerValues.map(d => d.value).indexOf(d.simplifiedAnswer)) +
-        barWidth / 2 +
         currentActiveAnswers.indexOf(d.party_id) * barWidth +
         getOffset(currentActiveAnswers, d.simplifiedAnswer)
       );
@@ -137,9 +139,9 @@
   }
 </script>
 
-<svg width="1200" height="3500">
-  <g transform="translate(50, 100)">
-    <g transform="translate(400, 0)">
+<svg width="620" height="3500">
+  <g transform="translate(10, 100)">
+    <g>
       {#each filteredParties as party, i}
         <path
           d={partyLine(party.data.reduce((acc, cur) => acc.concat([
@@ -151,12 +153,7 @@
       {/each}
     </g>
     {#each $activeQuestions as question, i}
-      <g transform="translate({400 - 5}, {i * 2 * rowHeight})">
-        <text
-          dy={-rowHeight / 2}
-          style="dominant-baseline: middle; text-anchor: end; font-size: 16px; color: #555;">
-          {question.text}
-        </text>
+      <g transform="translate(0, {i * 2 * rowHeight})">
         {#each answerValues as answer, j}
           <g
             transform="translate({10 + x(j)}, 0)"
@@ -173,21 +170,20 @@
               <text
                 style="font-size: 12px; text-anchor: middle; fill: hsl(30, 97%, 60%); dominant-baseline: middle;">
                 <tspan x={(13 * barWidth) / 2} y={-14 - 3 * 17}>
-                  <tspan style="font-size: 16px;">{$selectedCountry.seats}</tspan>
+                  <tspan style="font-size: 16px;">
+                    {$selectedCountry.seats}
+                  </tspan>
                   seats representing
                 </tspan>
                 <tspan x={(13 * barWidth) / 2} y={-14 - 2 * 17}>
                   {$selectedCountry.name}
                 </tspan>
                 <tspan x={(13 * barWidth) / 2} y={-14 - 1 * 17}>
-                  <!-- won't have this opinion, -->
                   {#if answer.value === 0}
                     won't disagree
                   {:else if answer.value === 50}
                     won't have a neutral opinion
-                  {:else}
-                    won't agree
-                  {/if}
+                  {:else}won't agree {/if}
                 </tspan>
                 <tspan x={(13 * barWidth) / 2} y={-14 - 0 * 17}>
                   despite the outcome

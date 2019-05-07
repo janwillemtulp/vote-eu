@@ -37,7 +37,7 @@ export const data = writable([])
 
 export const selectedCountry = writable({
   code: 'NL',
-  name: 'Netherlands',
+  name: 'The Netherlands',
   seats: 26
 })
 
@@ -63,6 +63,69 @@ export const activeData = derived(
   [data, selectedCountry],
   ([data, selectedCountry]) =>
     data.filter(d => d.country_code === selectedCountry.code)
+)
+
+export const opinionBlocks = derived(activeData, activeData =>
+  activeData.reduce((acc, cur) => {
+    const existing = acc.find(
+      d =>
+        d.question.id === cur.question_id &&
+        d.answer.simplifiedValue === cur.simplifiedAnswer
+    )
+    if (!existing) {
+      acc.push({
+        question: {
+          id: cur.question_id,
+          shared_id: cur.question_shared_id,
+          text: cur.question,
+          economic_liberalisation: cur.economic_liberalisation,
+          environmental_protection: cur.environmental_protection,
+          european_integration: cur.european_integration,
+          law_and_order: cur.law_and_order,
+          liberal_society: cur.liberal_society,
+          restrictive_financial_policy: cur.restrictive_financial_policy,
+          restrictive_immigration_policy: cur.restrictive_immigration_policy,
+          xy_lc: cur.xy_lc,
+          xy_lr: cur.xy_lr
+        },
+        answer: {
+          value: cur.answer,
+          simplifiedValue: cur.simplifiedAnswer
+        },
+        country: {
+          code: cur.country_code,
+          name: cur.country_name
+        },
+        parties: [
+          {
+            id: cur.party_id,
+            image: cur.party_image,
+            name_full: cur.party_name_full,
+            name_short: cur.party_name_short,
+            motivation: {
+              source: cur.motivation_src,
+              link: cur.motivation_src_link,
+              text: cur.motivation
+            }
+          }
+        ]
+      })
+    } else {
+      existing.parties.push({
+        id: cur.party_id,
+        image: cur.party_image,
+        name_full: cur.party_name_full,
+        name_short: cur.party_name_short,
+        motivation: {
+          source: cur.motivation_src,
+          link: cur.motivation_src_link,
+          text: cur.motivation
+        }
+      })
+    }
+
+    return acc
+  }, [])
 )
 
 export const activeQuestions = derived(activeData, activeData =>
@@ -141,15 +204,10 @@ export const filteredAnswers = derived(
   }
 )
 
-export const allAnswers = derived(data, data =>
-  rollup(
-    data,
-    v =>
-      v.reduce((acc, cur) => {
-        acc.push(cur.party_id)
-        return acc
-      }, []),
-    d => d.question_id,
-    d => d.simplifiedAnswer
-  )
+export const filteredParties = derived(
+  [activeAnswers, selectedAnswers],
+  ([$activeAnswers, $selectedAnswers]) => {
+    console.log($selectedAnswers, $activeAnswers)
+    return 'jsjs'
+  }
 )

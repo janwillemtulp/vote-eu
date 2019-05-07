@@ -10,12 +10,13 @@
     activeQuestions,
     activeParties,
     activeAnswers,
-    allCountries
+    allCountries,
+    opinionBlocks
   } from "./store.js";
   import Svg from "./Svg.svelte";
 
-	let innerWidth = 0
-	let innerHeight = 0
+  let innerWidth = 0;
+  let innerHeight = 0;
   let promise = loadData();
 
   const parse = attribute => (attribute === "" ? null : +attribute);
@@ -63,6 +64,7 @@
   }
 
   $: console.log($allCountries);
+  $: console.log("opinionBlocks", $opinionBlocks);
 </script>
 
 <style>
@@ -74,52 +76,93 @@
 
   img {
     cursor: pointer;
-	}
-	
-	.main-container {
-		overflow: scroll;
-		width: 1200px;
-	}
+  }
+
+  header {
+    padding: 0 20px;
+    height: 180px;
+  }
+
+  footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background-color: white;
+    width: 100%;
+  }
+
+  .main-container {
+    overflow: scroll;
+    width: 1200px;
+    display: grid;
+    grid-template-columns: 200px 620px;
+    width: 840px;
+    padding: 0 20px 50px 20px;
+  }
+
+  .column-label {
+    display: inline-block;
+    width: 150px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 18px;
+    font-family: "Libre Baskerville", serif;
+  }
 </style>
 
 <svelte:window bind:innerWidth bind:innerHeight />
 
-{#await promise}
-  <p>...loading data</p>
-{:then}
-{:catch error}
-  <p style="color: red;">{error.message}</p>
-{/await}
+<header>
+  {#await promise}
+    <p>...loading data</p>
+  {:then}
+  {:catch error}
+    <p style="color: red;">{error.message}</p>
+  {/await}
 
-<div>
-  {#each $allCountries as country}
-    <button
-      class="bg-blue"
-      style="background-color: {$selectedCountry.code === country.code ? 'orange' : '#ddd'}"
-      on:click={() => setSelectedCountry(country)}>
-      {country.code}
-    </button>
-  {/each}
-</div>
+  <div>
+    {#each $allCountries as country}
+      <button
+        class="bg-blue"
+        style="background-color: {$selectedCountry.code === country.code ? 'orange' : '#ddd'}"
+        on:click={() => setSelectedCountry(country)}>
+        {country.code}
+      </button>
+    {/each}
+  </div>
 
-<div>
-  {#each $activeParties as party}
-    <img
-      src={party.image}
-      alt={party.name_long}
-      height="30"
-      style="margin-right: 5px;"
-      on:click={() => ($selectedParty = $selectedParty === party.id ? undefined : party.id)} />
-  {/each}
-</div>
+  <div>
+    {#each $activeParties as party}
+      <img
+        src={party.image}
+        alt={party.name_long}
+        height="30"
+        style="margin-right: 5px;"
+        on:click={() => ($selectedParty = $selectedParty === party.id ? undefined : party.id)} />
+    {/each}
+  </div>
 
-<h1>{$selectedCountry.name}</h1>
+  <h1>{$selectedCountry.name}</h1>
 
-<div class="main-container" style="height: {innerHeight - 200}px;">
-	<Svg />
+  <div style="margin-left: 200px;">
+    <div class="column-label" style="color: hsl(200, 50%, 50%);">Agree</div>
+    <div class="column-label" style="color: #999;">Neutral</div>
+    <div class="column-label" style="color: hsl(0, 50%, 50%);">Disagree</div>
+    <div class="column-label" style="color: pink;">No opinion</div>
+  </div>
+</header>
+
+<div class="main-container" style="height: {innerHeight - 180 - 100}px;">
+  <div style="margin-top: 20px;">
+    {#each $activeQuestions as question, i}
+      <p style="height: 160px; margin: 0; text-align: right;">
+        {question.text}
+      </p>
+    {/each}
+  </div>
+  <Svg />
 </div>
 
 <footer>
-<p>concept & design by TULP interactive &copy;2019</p>
+  <p>concept & design by TULP interactive ©2019</p>
 </footer>
-
