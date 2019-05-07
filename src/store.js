@@ -69,7 +69,7 @@ const answerColors = new Map();
 answerColors.set(100, "hsl(200, 50%, 50%)");
 answerColors.set(50, "#999");
 answerColors.set(0, "hsl(0, 50%, 50%)");
-answerColors.set(null, "pink");
+answerColors.set(null, "hsl(310, 50%, 80%)");
 
 export const opinionBlocks = derived(activeData, activeData =>
   activeData.reduce((acc, cur) => {
@@ -133,6 +133,20 @@ export const opinionBlocks = derived(activeData, activeData =>
 
     return acc;
   }, [])
+);
+
+export const selectedOpinions = writable(new Map());
+
+export const selectedPartyIds = derived(selectedOpinions, selectedOpinions =>
+  Array.from(selectedOpinions)
+    .map(d => d[1].parties.map(d => d.id))
+    .reduce((acc, cur) => {
+      if (acc.length === 0) {
+        return cur;
+      } else {
+        return acc.filter(d => cur.includes(d));
+      }
+    }, [])
 );
 
 export const allParties = derived(opinionBlocks, opinionBlocks =>
@@ -220,13 +234,5 @@ export const filteredAnswers = derived(
       d => d.question_id,
       d => d.simplifiedAnswer
     );
-  }
-);
-
-export const filteredParties = derived(
-  [activeAnswers, selectedAnswers],
-  ([$activeAnswers, $selectedAnswers]) => {
-    console.log($selectedAnswers, $activeAnswers);
-    return "jsjs";
   }
 );

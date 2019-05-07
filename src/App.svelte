@@ -6,6 +6,8 @@
     selectedCountry,
     selectedParty,
     selectedAnswers,
+    selectedOpinions,
+    selectedPartyIds,
     activeData,
     activeQuestions,
     activeParties,
@@ -61,10 +63,20 @@
     console.log(code);
     $selectedCountry = code;
     $selectedAnswers = new Array(22);
+    $selectedOpinions = new Map();
   }
 
   $: console.log($allCountries);
   $: console.log("opinionBlocks", $opinionBlocks);
+
+  $: answerValuesRemaining = question =>
+    $opinionBlocks
+      .filter(d => d.question.id === question.id)
+      .filter(
+        d =>
+          d.parties.map(d => d.id).filter(d => $selectedPartyIds.includes(d))
+            .length > 0
+      );
 </script>
 
 <style>
@@ -108,6 +120,12 @@
     font-size: 18px;
     font-family: "Libre Baskerville", serif;
   }
+
+  .question {
+    height: 160px;
+    margin: 0;
+    text-align: right;
+  }
 </style>
 
 <svelte:window bind:innerWidth bind:innerHeight />
@@ -148,14 +166,18 @@
     <div class="column-label" style="color: hsl(200, 50%, 50%);">Agree</div>
     <div class="column-label" style="color: #999;">Neutral</div>
     <div class="column-label" style="color: hsl(0, 50%, 50%);">Disagree</div>
-    <div class="column-label" style="color: pink;">No opinion</div>
+    <div class="column-label" style="color: hsl(310, 50%, 80%);">
+      No opinion
+    </div>
   </div>
 </header>
 
 <div class="main-container" style="height: {innerHeight - 180 - 100}px;">
   <div style="margin-top: 20px;">
     {#each $activeQuestions as question, i}
-      <p style="height: 160px; margin: 0; text-align: right;">
+      <p
+        class="question"
+        style="font-weight: {answerValuesRemaining(question).length === 1 ? 'bold' : 'normal'}; color: {answerValuesRemaining(question).length === 1 ? answerValuesRemaining(question)[0].answer.color : 'black'}">
         {question.text}
       </p>
     {/each}
