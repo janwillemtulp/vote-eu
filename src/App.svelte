@@ -4,12 +4,12 @@
   import {
     data,
     selectedCountry,
-    selectedPartyIds2,
+    selectedPartyIds,
     activeData,
     activeQuestions,
     activeParties,
     allCountries,
-    opinionBlocks
+    opinions
   } from "./store.js";
   import Svg from "./Svg.svelte";
   import CountryButton from "./CountryButton.svelte";
@@ -57,14 +57,14 @@
   }
 
   $: console.log($allCountries);
-  $: console.log("opinionBlocks", $opinionBlocks);
+  $: console.log("opinions", $opinions);
 
   $: answerValuesRemaining = question =>
-    $opinionBlocks
+    $opinions
       .filter(d => d.question.id === question.id)
       .filter(
         d =>
-          d.parties.map(d => d.id).filter(d => $selectedPartyIds2.includes(d))
+          d.parties.map(d => d.id).filter(d => $selectedPartyIds.includes(d))
             .length > 0
       );
 </script>
@@ -81,26 +81,22 @@
     display: grid;
     grid-auto-columns: 940px;
     justify-content: center;
+    background-color: white;
+    position: fixed;
+    top: 0;
   }
 
-  footer {
+  /* footer {
     position: absolute;
     bottom: 0;
     left: 0;
     background-color: white;
     width: 100%;
-  }
+  } */
 
-  .main-container {
-    overflow: scroll;
-    display: grid;
-    grid-template-columns: 200px 540px;
-    margin-bottom: 50px;
-  }
-
-  .column-label {
+  .opinion-label {
     display: inline-block;
-    width: 150px;
+    width: calc(540px / 4);
     text-align: center;
     font-weight: bold;
     font-size: 18px;
@@ -109,8 +105,12 @@
 
   .question {
     height: 120px;
-    margin-right: 10px;
+    margin: 0 10px 0 0;
     text-align: right;
+  }
+
+  h1 {
+    margin-bottom: 30px;
   }
 
   h1 span {
@@ -121,22 +121,37 @@
 
   main {
     display: grid;
-    grid-auto-columns: 940px;
+    grid-template-columns: 200px 540px 200px;
     justify-content: center;
-  }
-
-  .content {
-    display: grid;
-    grid-template-columns: 740px 200px;
+    margin-top: 160px;
   }
 
   aside {
-    background-color: #ddd;
     margin-left: 10px;
+  }
+
+  .opinion-labels {
+    margin-left: 200px;
   }
 </style>
 
 <svelte:window bind:innerWidth bind:innerHeight />
+
+<main>
+  <div>
+    {#each $activeQuestions as question, i}
+      <p
+        class="question"
+        style="font-weight: {answerValuesRemaining(question).length === 1 ? 'bold' : 'normal'}; color: {answerValuesRemaining(question).length === 1 ? answerValuesRemaining(question)[0].answer.color : 'black'}">
+        {question.text}
+      </p>
+    {/each}
+  </div>
+  <Svg containerHeight={innerHeight - 150 - 100} />
+  <aside>
+    <p style="position: fixed;">test</p>
+  </aside>
+</main>
 
 <header>
   <div>
@@ -158,35 +173,19 @@
       <span> {$selectedCountry.seats} seats in EU parliament</span>
     </h1>
 
-    <div style="margin-left: 200px;">
-      <div class="column-label" style="color: hsl(200, 50%, 50%);">Agree</div>
-      <div class="column-label" style="color: #999;">Neutral</div>
-      <div class="column-label" style="color: hsl(0, 50%, 50%);">Disagree</div>
-      <div class="column-label" style="color: hsl(310, 50%, 70%);">
+    <div class="opinion-labels">
+      <div class="opinion-label" style="color: hsl(200, 50%, 50%);">Agree</div>
+      <div class="opinion-label" style="color: #999;">Neutral</div>
+      <div class="opinion-label" style="color: hsl(0, 50%, 50%);">
+        Disagree
+      </div>
+      <div class="opinion-label" style="color: hsl(310, 50%, 70%);">
         No opinion
       </div>
     </div>
   </div>
 </header>
 
-<main>
-  <div class="content">
-    <div class="main-container" style="height: {innerHeight - 150 - 100}px;">
-      <div style="margin-top: 20px;">
-        {#each $activeQuestions as question, i}
-          <p
-            class="question"
-            style="font-weight: {answerValuesRemaining(question).length === 1 ? 'bold' : 'normal'}; color: {answerValuesRemaining(question).length === 1 ? answerValuesRemaining(question)[0].answer.color : 'black'}">
-            {question.text}
-          </p>
-        {/each}
-      </div>
-      <Svg containerHeight={innerHeight - 150 - 100} />
-    </div>
-    <aside>aside</aside>
-  </div>
-</main>
-
-<footer>
+<!-- <footer>
   <p>concept & design by TULP interactive ©2019</p>
-</footer>
+</footer> -->

@@ -1,13 +1,13 @@
 <script>
-  import { opinionBlocks, allParties, selectedPartyIds2 } from "./store.js";
+  import { opinions, allParties, selectedPartyIds } from "./store.js";
   import { scaleOrdinal, scaleLinear } from "d3-scale";
   import { extent } from "d3-array";
   import { line, curveMonotoneY } from "d3-shape";
   import { mouse, select } from "d3-selection";
 
-  $: console.log("$opinionBlocks", $opinionBlocks);
+  $: console.log("$opinions", $opinions);
   $: console.log("$allParties", $allParties);
-  $: console.log("$selectedPartyIds2", $selectedPartyIds2);
+  $: console.log("$selectedPartyIds2", $selectedPartyIds);
 
   let rowHeight = 60;
   let barWidth = 10;
@@ -22,7 +22,7 @@
     .range(Array.from(Array(4).keys()).map(d => d * answerWidth));
 
   $: y = scaleLinear()
-    .domain(extent($opinionBlocks.map(d => d.question.id)))
+    .domain(extent($opinions.map(d => d.question.id)))
     .range([0, 21 * rowHeight * 2]);
 
   function xOffset(block) {
@@ -35,9 +35,7 @@
   }
 
   function filterOpinionsByParty(party) {
-    return $opinionBlocks.filter(d =>
-      d.parties.map(d => d.id).includes(party.id)
-    );
+    return $opinions.filter(d => d.parties.map(d => d.id).includes(party.id));
   }
 
   function getPath(partyId, opinions) {
@@ -60,22 +58,20 @@
   function updateSelectedPartyIds(opinion) {
     const partyIds = opinion.parties.map(d => d.id);
 
-    if ($selectedPartyIds2.length === 0) {
-      $selectedPartyIds2 = partyIds;
-    } else if ($selectedPartyIds2.every(d => partyIds.includes(d))) {
-      $selectedPartyIds2 = $selectedPartyIds2.filter(
-        d => !partyIds.includes(d)
-      );
-    } else if ($selectedPartyIds2.some(d => partyIds.includes(d))) {
-      $selectedPartyIds2 = $selectedPartyIds2.filter(d => partyIds.includes(d));
+    if ($selectedPartyIds.length === 0) {
+      $selectedPartyIds = partyIds;
+    } else if ($selectedPartyIds.every(d => partyIds.includes(d))) {
+      $selectedPartyIds = $selectedPartyIds.filter(d => !partyIds.includes(d));
+    } else if ($selectedPartyIds.some(d => partyIds.includes(d))) {
+      $selectedPartyIds = $selectedPartyIds.filter(d => partyIds.includes(d));
     } else {
-      $selectedPartyIds2 = partyIds;
+      $selectedPartyIds = partyIds;
     }
   }
 
   $: includesSelectedPartyIds = opinion =>
-    $selectedPartyIds2.length > 0 &&
-    $selectedPartyIds2.every(d => opinion.parties.map(p => p.id).includes(d));
+    $selectedPartyIds.length > 0 &&
+    $selectedPartyIds.every(d => opinion.parties.map(p => p.id).includes(d));
 
   function showPopup(info, e) {
     mousePos = [e.clientX, e.clientY];
@@ -129,8 +125,8 @@
 
 <div>
   <svg width="540" height={22 * 2 * rowHeight + 22}>
-    <g transform="translate(0, 22)">
-      {#each $opinionBlocks as opinion}
+    <g>
+      {#each $opinions as opinion}
         <rect
           x={xc(opinion.answer.simplifiedValue)}
           y={y(opinion.question.id)}
@@ -147,10 +143,10 @@
           d={getPath(party.id, filterOpinionsByParty(party).reduce((acc, cur) => acc.concat(
                   [cur, cur, cur]
                 ), []))}
-          style="fill: none; stroke: {$selectedPartyIds2.includes(party.id) ? '#555' : '#ccc'}; stroke-dasharray: {$selectedPartyIds2.includes(party.id) ? 'none' : '2 2'};" />
+          style="fill: none; stroke: {$selectedPartyIds.includes(party.id) ? '#555' : '#ccc'}; stroke-dasharray: {$selectedPartyIds.includes(party.id) ? 'none' : '2 2'};" />
       {/each}
 
-      {#each $opinionBlocks as opinion}
+      {#each $opinions as opinion}
         <g
           transform="translate({xc(opinion.answer.simplifiedValue)}, {y(opinion.question.id)})">
           {#each opinion.parties as party, i}
@@ -159,10 +155,10 @@
               y={rowHeight / 4}
               width={barWidth}
               height={rowHeight / 2}
-              style="fill: {$selectedPartyIds2.includes(party.id) || $selectedPartyIds2.length === 0 ? opinion.answer.color : '#ccc'}; fill-opacity: {$selectedPartyIds2.includes(party.id) ? 1 : 0.4};"
+              style="fill: {$selectedPartyIds.includes(party.id) || $selectedPartyIds.length === 0 ? opinion.answer.color : '#ccc'}; fill-opacity: {$selectedPartyIds.includes(party.id) ? 1 : 0.4};"
               class="party-answer"
               on:click={() => updateSelectedPartyIds(opinion)}
-              on:mousemove={e => (mousePos = [e.clientX, e.clientY])}
+              on:mousemove={e => (mousePos = [e.clientX, e.offsetY])}
               on:mouseover={e => showPopup({ party, ...opinion }, e)}
               on:mouseout={() => hidePopup()} />
           {/each}
@@ -172,7 +168,7 @@
   </svg>
   <div
     class="popup"
-    style="display: {hoverParty ? 'block' : 'none'}; left: {mousePos ? mousePos[0] + 20 : 0}px; top: {mousePos ? mousePos[1] - Math.max(0, mousePos[1] + popupHeight - 150 - 46 - containerHeight) : 0};"
+    style="display: {hoverParty ? 'block' : 'none'}; left: {mousePos ? mousePos[0] + 20 : 0}px; top: {mousePos ? mousePos[1] : 0};"
     bind:clientHeight={popupHeight}>
     {#if hoverParty}
       <h2>{hoverParty.party.name_short}</h2>

@@ -73,7 +73,7 @@ answerLabels.set(50, 'Neutral')
 answerLabels.set(0, 'Disagree')
 answerLabels.set(null, 'No opinion')
 
-export const opinionBlocks = derived(activeData, activeData =>
+export const opinions = derived(activeData, activeData =>
   activeData.reduce((acc, cur) => {
     const existing = acc.find(
       d =>
@@ -138,10 +138,10 @@ export const opinionBlocks = derived(activeData, activeData =>
   }, [])
 )
 
-export const selectedPartyIds2 = writable([])
+export const selectedPartyIds = writable([])
 
-export const allParties = derived(opinionBlocks, opinionBlocks =>
-  opinionBlocks.reduce((acc, cur) => {
+export const allParties = derived(opinions, opinions =>
+  opinions.reduce((acc, cur) => {
     cur.parties.forEach(c => {
       if (!acc.find(d => d.id === c.id)) {
         acc.push(c)

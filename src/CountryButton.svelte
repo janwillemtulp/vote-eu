@@ -1,11 +1,11 @@
 <script>
-  import { selectedCountry, selectedPartyIds2 } from "./store.js";
+  import { selectedCountry, selectedPartyIds } from "./store.js";
 
   export let country;
 
   function setSelectedCountry() {
     $selectedCountry = country;
-    $selectedPartyIds2 = [];
+    $selectedPartyIds = [];
   }
 
   $: selected = $selectedCountry.code === country.code
@@ -18,12 +18,12 @@
   }
 
   button:hover {
-    background-color: #ddd;
+    background-color: hsl(39, 100%, 85%);
     cursor: pointer;
   }
 
   .selected {
-    background-color: orange
+    background-color: hsl(39, 100%, 50%);
   }
 </style>
 
