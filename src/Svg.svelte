@@ -11,7 +11,7 @@
 
   let rowHeight = 60;
   let barWidth = 10;
-  let answerWidth = 150;
+  let answerWidth = 540 / 4;
   let hoverParty;
   let mousePos;
   let popupHeight;
@@ -128,8 +128,8 @@
 </style>
 
 <div>
-  <svg width="620" height={22 * 2 * rowHeight + 22}>
-    <g transform="translate(10, 22)">
+  <svg width="540" height={22 * 2 * rowHeight + 22}>
+    <g transform="translate(0, 22)">
       {#each $opinionBlocks as opinion}
         <rect
           x={xc(opinion.answer.simplifiedValue)}
