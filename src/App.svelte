@@ -4,14 +4,10 @@
   import {
     data,
     selectedCountry,
-    selectedParty,
-    selectedAnswers,
-    selectedOpinions,
     selectedPartyIds2,
     activeData,
     activeQuestions,
     activeParties,
-    activeAnswers,
     allCountries,
     opinionBlocks
   } from "./store.js";
@@ -62,8 +58,7 @@
   function setSelectedCountry(code) {
     console.log(code);
     $selectedCountry = code;
-    $selectedAnswers = new Array(22);
-    $selectedOpinions = new Map();
+    $selectedPartyIds2 = [];
   }
 
   $: console.log($allCountries);
@@ -86,13 +81,9 @@
     width: 30px;
   }
 
-  img {
-    cursor: pointer;
-  }
-
   header {
     padding: 0 20px;
-    height: 180px;
+    height: 150px;
   }
 
   footer {
@@ -126,6 +117,12 @@
     margin: 0;
     text-align: right;
   }
+
+  h1 span {
+    font-size: 14px;
+    font-family: "Source Sans Pro", sans-serif;
+    font-style: italic;
+  }
 </style>
 
 <svelte:window bind:innerWidth bind:innerHeight />
@@ -149,30 +146,22 @@
     {/each}
   </div>
 
-  <div>
-    {#each $activeParties as party}
-      <img
-        src={party.image}
-        alt={party.name_long}
-        height="30"
-        style="margin-right: 5px;"
-        on:click={() => ($selectedParty = $selectedParty === party.id ? undefined : party.id)} />
-    {/each}
-  </div>
-
-  <h1>{$selectedCountry.name}</h1>
+  <h1>
+    {$selectedCountry.name}
+    <span> {$selectedCountry.seats} seats in EU parliament</span>
+  </h1>
 
   <div style="margin-left: 200px;">
     <div class="column-label" style="color: hsl(200, 50%, 50%);">Agree</div>
     <div class="column-label" style="color: #999;">Neutral</div>
     <div class="column-label" style="color: hsl(0, 50%, 50%);">Disagree</div>
-    <div class="column-label" style="color: hsl(310, 50%, 80%);">
+    <div class="column-label" style="color: hsl(310, 50%, 70%);">
       No opinion
     </div>
   </div>
 </header>
 
-<div class="main-container" style="height: {innerHeight - 180 - 100}px;">
+<div class="main-container" style="height: {innerHeight - 150 - 100}px;">
   <div style="margin-top: 20px;">
     {#each $activeQuestions as question, i}
       <p
@@ -182,7 +171,7 @@
       </p>
     {/each}
   </div>
-  <Svg />
+  <Svg containerHeight={innerHeight - 150 - 100} />
 </div>
 
 <footer>

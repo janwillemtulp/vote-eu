@@ -41,10 +41,6 @@ export const selectedCountry = writable({
   seats: 26
 })
 
-export const selectedAnswers = writable(new Array(22))
-
-export const selectedParty = writable()
-
 export const allCountries = derived(data, data =>
   data.reduce((acc, cur) => {
     if (!acc.map(d => d.code).includes(cur.country_code)) {
@@ -69,7 +65,13 @@ const answerColors = new Map()
 answerColors.set(100, 'hsl(200, 50%, 50%)')
 answerColors.set(50, '#999')
 answerColors.set(0, 'hsl(0, 50%, 50%)')
-answerColors.set(null, 'hsl(310, 50%, 80%)')
+answerColors.set(null, 'hsl(310, 50%, 70%)')
+
+const answerLabels = new Map()
+answerLabels.set(100, 'Agree')
+answerLabels.set(50, 'Neutral')
+answerLabels.set(0, 'Disagree')
+answerLabels.set(null, 'No opinion')
 
 export const opinionBlocks = derived(activeData, activeData =>
   activeData.reduce((acc, cur) => {
@@ -97,7 +99,8 @@ export const opinionBlocks = derived(activeData, activeData =>
         answer: {
           value: cur.answer,
           simplifiedValue: cur.simplifiedAnswer,
-          color: answerColors.get(cur.simplifiedAnswer)
+          color: answerColors.get(cur.simplifiedAnswer),
+          label: answerLabels.get(cur.simplifiedAnswer)
         },
         country: {
           code: cur.country_code,
@@ -161,66 +164,4 @@ export const activeQuestions = derived(activeData, activeData =>
 
     return acc
   }, [])
-)
-
-export const activeParties = derived(activeData, activeData =>
-  activeData.reduce((acc, cur) => {
-    if (!acc.map(d => d.id).includes(cur.party_id)) {
-      const partyData = activeData.filter(d => d.party_id === cur.party_id)
-
-      acc.push({
-        id: cur.party_id,
-        name_short: cur.party_name_short,
-        name_long: cur.party_name_full,
-        image: cur.party_image,
-        data: partyData,
-        leftRight:
-          partyData // economical
-            .map(d => d.xy_lr * (d.answer - 50) + 50)
-            .reduce((acc, cur) => acc + cur, 0) / partyData.length,
-        liberalConservative:
-          partyData // cultural
-            .map(d => d.xy_lc * (d.answer - 50) + 50)
-            .reduce((acc, cur) => acc + cur, 0) / partyData.length
-      })
-    }
-
-    return acc
-  }, [])
-)
-
-export const activeAnswers = derived(activeData, activeData =>
-  rollup(
-    activeData,
-    v =>
-      v.reduce((acc, cur) => {
-        acc.push(cur.party_id)
-        return acc
-      }, []),
-    d => d.question_id,
-    d => d.simplifiedAnswer
-  )
-)
-
-// TODO: should work with activeAnswers directly????
-export const filteredAnswers = derived(
-  [activeData, selectedAnswers],
-  ([$activeData, $selectedAnswers]) => {
-    console.log($selectedAnswers.filter(d => d !== undefined))
-    return rollup(
-      $activeData.filter(d =>
-        $selectedAnswers
-          .filter(d => d !== undefined)
-          .map(d => d.questionId)
-          .includes(d.question_id)
-      ),
-      v =>
-        v.reduce((acc, cur) => {
-          acc.push(cur.party_id)
-          return acc
-        }, []),
-      d => d.question_id,
-      d => d.simplifiedAnswer
-    )
-  }
 )
