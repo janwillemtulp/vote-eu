@@ -14,7 +14,7 @@
   $: console.log("$selectedOpinions", $selectedOpinions);
   $: console.log("$selectedPartyIds", $selectedPartyIds);
 
-  let rowHeight = 80;
+  let rowHeight = 60;
   let barWidth = 10;
   let answerWidth = 150;
 
@@ -96,7 +96,7 @@
   }
 </style>
 
-<svg width="620" height="3500">
+<svg width="620" height={22 * 2 * rowHeight + 22}>
   <g transform="translate(10, 22)">
     {#each $opinionBlocks as opinion}
       <rect
@@ -127,7 +127,7 @@
             y={rowHeight / 4}
             width={barWidth}
             height={rowHeight / 2}
-            style="fill: {block.answer.color}; fill-opacity: {$selectedPartyIds.includes(party.id) ? 1 : 0.4}"
+            style="fill: {$selectedPartyIds.includes(party.id) || $selectedPartyIds.length === 0 ? block.answer.color : '#ccc'}; fill-opacity: {$selectedPartyIds.includes(party.id) ? 1 : 0.4};"
             class="party-answer" />
         {/each}
       </g>

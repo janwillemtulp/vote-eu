@@ -122,7 +122,7 @@
   }
 
   .question {
-    height: 160px;
+    height: 120px;
     margin: 0;
     text-align: right;
   }
