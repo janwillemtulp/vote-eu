@@ -7,7 +7,7 @@
     selectedParty,
     selectedAnswers,
     selectedOpinions,
-    selectedPartyIds,
+    selectedPartyIds2,
     activeData,
     activeQuestions,
     activeParties,
@@ -15,7 +15,7 @@
     allCountries,
     opinionBlocks
   } from "./store.js";
-  import Svg2 from "./Svg2.svelte";
+  import Svg from "./Svg.svelte";
 
   let innerWidth = 0;
   let innerHeight = 0;
@@ -74,7 +74,7 @@
       .filter(d => d.question.id === question.id)
       .filter(
         d =>
-          d.parties.map(d => d.id).filter(d => $selectedPartyIds.includes(d))
+          d.parties.map(d => d.id).filter(d => $selectedPartyIds2.includes(d))
             .length > 0
       );
 </script>
@@ -182,7 +182,7 @@
       </p>
     {/each}
   </div>
-  <Svg2 />
+  <Svg />
 </div>
 
 <footer>

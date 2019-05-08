@@ -1,5 +1,5 @@
-import { writable, derived } from "svelte/store";
-import { rollup } from "d3-array";
+import { writable, derived } from 'svelte/store'
+import { rollup } from 'd3-array'
 
 // from Wikipedia, assuming the UK won't leave before the elections
 const seats = {
@@ -31,19 +31,19 @@ const seats = {
   CY: 6,
   LU: 6,
   MT: 6
-};
+}
 
-export const data = writable([]);
+export const data = writable([])
 
 export const selectedCountry = writable({
-  code: "NL",
-  name: "The Netherlands",
+  code: 'NL',
+  name: 'The Netherlands',
   seats: 26
-});
+})
 
-export const selectedAnswers = writable(new Array(22));
+export const selectedAnswers = writable(new Array(22))
 
-export const selectedParty = writable();
+export const selectedParty = writable()
 
 export const allCountries = derived(data, data =>
   data.reduce((acc, cur) => {
@@ -52,24 +52,24 @@ export const allCountries = derived(data, data =>
         code: cur.country_code,
         name: cur.country_name,
         seats: seats[cur.country_code]
-      });
+      })
     }
 
-    return acc;
+    return acc
   }, [])
-);
+)
 
 export const activeData = derived(
   [data, selectedCountry],
   ([data, selectedCountry]) =>
     data.filter(d => d.country_code === selectedCountry.code)
-);
+)
 
-const answerColors = new Map();
-answerColors.set(100, "hsl(200, 50%, 50%)");
-answerColors.set(50, "#999");
-answerColors.set(0, "hsl(0, 50%, 50%)");
-answerColors.set(null, "hsl(310, 50%, 80%)");
+const answerColors = new Map()
+answerColors.set(100, 'hsl(200, 50%, 50%)')
+answerColors.set(50, '#999')
+answerColors.set(0, 'hsl(0, 50%, 50%)')
+answerColors.set(null, 'hsl(310, 50%, 80%)')
 
 export const opinionBlocks = derived(activeData, activeData =>
   activeData.reduce((acc, cur) => {
@@ -77,7 +77,7 @@ export const opinionBlocks = derived(activeData, activeData =>
       d =>
         d.question.id === cur.question_id &&
         d.answer.simplifiedValue === cur.simplifiedAnswer
-    );
+    )
     if (!existing) {
       acc.push({
         question: {
@@ -116,7 +116,7 @@ export const opinionBlocks = derived(activeData, activeData =>
             }
           }
         ]
-      });
+      })
     } else {
       existing.parties.push({
         id: cur.party_id,
@@ -128,38 +128,26 @@ export const opinionBlocks = derived(activeData, activeData =>
           link: cur.motivation_src_link,
           text: cur.motivation
         }
-      });
+      })
     }
 
-    return acc;
+    return acc.sort((a, b) => a.question.id - b.question.id)
   }, [])
-);
+)
 
-export const selectedOpinions = writable(new Map());
-
-export const selectedPartyIds = derived(selectedOpinions, selectedOpinions =>
-  Array.from(selectedOpinions)
-    .map(d => d[1].parties.map(d => d.id))
-    .reduce((acc, cur) => {
-      if (acc.length === 0) {
-        return cur;
-      } else {
-        return acc.filter(d => cur.includes(d));
-      }
-    }, [])
-);
+export const selectedPartyIds2 = writable([])
 
 export const allParties = derived(opinionBlocks, opinionBlocks =>
   opinionBlocks.reduce((acc, cur) => {
     cur.parties.forEach(c => {
       if (!acc.find(d => d.id === c.id)) {
-        acc.push(c);
+        acc.push(c)
       }
-    });
+    })
 
-    return acc;
+    return acc
   }, [])
-);
+)
 
 export const activeQuestions = derived(activeData, activeData =>
   activeData.reduce((acc, cur) => {
@@ -168,17 +156,17 @@ export const activeQuestions = derived(activeData, activeData =>
         id: cur.question_id,
         shared_id: cur.question_shared_id,
         text: cur.question
-      });
+      })
     }
 
-    return acc;
+    return acc
   }, [])
-);
+)
 
 export const activeParties = derived(activeData, activeData =>
   activeData.reduce((acc, cur) => {
     if (!acc.map(d => d.id).includes(cur.party_id)) {
-      const partyData = activeData.filter(d => d.party_id === cur.party_id);
+      const partyData = activeData.filter(d => d.party_id === cur.party_id)
 
       acc.push({
         id: cur.party_id,
@@ -194,31 +182,31 @@ export const activeParties = derived(activeData, activeData =>
           partyData // cultural
             .map(d => d.xy_lc * (d.answer - 50) + 50)
             .reduce((acc, cur) => acc + cur, 0) / partyData.length
-      });
+      })
     }
 
-    return acc;
+    return acc
   }, [])
-);
+)
 
 export const activeAnswers = derived(activeData, activeData =>
   rollup(
     activeData,
     v =>
       v.reduce((acc, cur) => {
-        acc.push(cur.party_id);
-        return acc;
+        acc.push(cur.party_id)
+        return acc
       }, []),
     d => d.question_id,
     d => d.simplifiedAnswer
   )
-);
+)
 
 // TODO: should work with activeAnswers directly????
 export const filteredAnswers = derived(
   [activeData, selectedAnswers],
   ([$activeData, $selectedAnswers]) => {
-    console.log($selectedAnswers.filter(d => d !== undefined));
+    console.log($selectedAnswers.filter(d => d !== undefined))
     return rollup(
       $activeData.filter(d =>
         $selectedAnswers
@@ -228,11 +216,11 @@ export const filteredAnswers = derived(
       ),
       v =>
         v.reduce((acc, cur) => {
-          acc.push(cur.party_id);
-          return acc;
+          acc.push(cur.party_id)
+          return acc
         }, []),
       d => d.question_id,
       d => d.simplifiedAnswer
-    );
+    )
   }
-);
+)

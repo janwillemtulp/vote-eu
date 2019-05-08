@@ -1,210 +1,143 @@
 <script>
-  import {
-    activeQuestions,
-    activeAnswers,
-    activeParties,
-    selectedAnswers,
-    selectedParty,
-    selectedCountry,
-    filteredAnswers,
-    filteredParties as tmp
-  } from "./store.js";
-  import { scaleLinear } from "d3-scale";
+  import { opinionBlocks, allParties, selectedPartyIds2 } from "./store.js";
+  import { scaleOrdinal, scaleLinear } from "d3-scale";
+  import { extent } from "d3-array";
   import { line, curveMonotoneY } from "d3-shape";
 
-  let answerValues = [
-    { value: 100, label: "Completely agree", color: "hsl(200, 50%, 50%)" },
-    // { value: 75, label: "Tend to agree", color: "hsl(200, 50%, 60%)" },
-    { value: 50, label: "Neutral", color: "#999" },
-    // { value: 25, label: "Tend to disagree", color: "hsl(0, 50%, 60%)" },
-    { value: 0, label: "Completely disagree", color: "hsl(0, 50%, 50%)" },
-    { value: null, label: "No opinion", color: "pink" }
-  ];
+  $: console.log("$opinionBlocks", $opinionBlocks);
+  $: console.log("$allParties", $allParties);
+  $: console.log("$selectedPartyIds2", $selectedPartyIds2);
 
-  let x;
-  let maxWidth = 400 / answerValues.length;
-  let rowHeight = 80;
+  let rowHeight = 60;
   let barWidth = 10;
-  let margin = 20;
+  let answerWidth = 150;
 
-  $: x = scaleLinear()
-    .domain([0, answerValues.length])
-    .range([
-      0,
-      13 * barWidth * answerValues.length + answerValues.length * margin
-    ]);
+  let xc = scaleOrdinal()
+    .domain([100, 50, 0, null])
+    .range(Array.from(Array(4).keys()).map(d => d * answerWidth));
 
-  $: filteredParties = $activeParties.filter(d =>
-    $selectedParty === undefined ? true : d.id === $selectedParty
-  );
+  $: y = scaleLinear()
+    .domain(extent($opinionBlocks.map(d => d.question.id)))
+    .range([0, 21 * rowHeight * 2]);
 
-  $: console.log("activeQuestions", $activeQuestions);
-  $: console.log("activeAnswers", $activeAnswers);
-  // $: console.log("selectedAnswers", $selectedAnswers);
-  $: console.log("filteredAnswers", $filteredAnswers);
-  $: console.log("filteredParties", $tmp);
-
-  function getBackgroundColor(questionId, answerValue) {
-    const question = $activeAnswers.get(questionId);
-
-    if (
-      [0, 25].includes(answerValue) &&
-      !question.has(0) &&
-      !question.has(25)
-    ) {
-      return "#FED8B1";
+  function xOffset(block) {
+    if (block.answer.simplifiedValue === 100) {
+      return answerWidth - barWidth - block.parties.length * barWidth;
+    } else if (block.answer.simplifiedValue === 50) {
+      return answerWidth / 2 - (block.parties.length * barWidth) / 2;
     }
-
-    if (
-      [100, 75].includes(answerValue) &&
-      !question.has(100) &&
-      !question.has(75)
-    ) {
-      return "#FED8B1";
-    }
-
-    if ([50].includes(answerValue) && !question.has(50)) {
-      return "#FED8B1";
-    }
-
-    return "#eee";
+    return barWidth;
   }
 
-  function toggleAnswer(questionSharedId, answerValue, questionId) {
-    const tmp = [...$selectedAnswers];
+  function filterOpinionsByParty(party) {
+    return $opinionBlocks.filter(d =>
+      d.parties.map(d => d.id).includes(party.id)
+    );
+  }
+
+  function getPath(partyId, opinions) {
+    return line()
+      .x(
+        (d, i) =>
+          xc(d.answer.simplifiedValue) +
+          xOffset(d) +
+          d.parties.map(d => d.id).indexOf(partyId) * barWidth
+      )
+      .y(
+        (d, i) =>
+          -rowHeight / 2 +
+          Math.floor(i / 3) * 2 * rowHeight +
+          (i % 3 === 0 ? -rowHeight / 4 : i % 3 === 2 ? rowHeight / 4 : 0)
+      )
+      .curve(curveMonotoneY)(opinions);
+  }
+
+  function updateSelectedOpinions(opinion) {
+    const tmp = $selectedOpinions;
 
     if (
-      tmp[questionSharedId] &&
-      tmp[questionSharedId].simplifiedAnswer === answerValue
+      tmp.has(opinion.question.id) &&
+      tmp.get(opinion.question.id).answer.simplifiedValue ===
+        opinion.answer.simplifiedValue
     ) {
-      tmp[questionSharedId] = undefined;
+      tmp.delete(opinion.question.id);
     } else {
-      tmp[questionSharedId] = {
-        simplifiedAnswer: answerValue,
-        questionId
-      };
+      tmp.set(opinion.question.id, opinion);
     }
 
-    $selectedAnswers = tmp;
+    $selectedOpinions = tmp;
   }
 
-  function getOffset(activeAnswers, answerValue) {
-    if (answerValue === 100) {
-      return 13 * barWidth - activeAnswers.length * barWidth;
-    } else if (answerValue === 50) {
-      return 6 * barWidth - activeAnswers.length * 0.5 * barWidth;
-    } else {
-      return 0;
-    }
-  }
+  function updateSelectedPartyIds(opinion) {
+    const partyIds = opinion.parties.map(d => d.id);
 
-  let partyLine = line()
-    .x(d => {
-      const currentActiveAnswers = $activeAnswers
-        .get(d.question_id)
-        .get(d.simplifiedAnswer);
-
-      return (
-        5 +
-        barWidth +
-        x(answerValues.map(d => d.value).indexOf(d.simplifiedAnswer)) +
-        currentActiveAnswers.indexOf(d.party_id) * barWidth +
-        getOffset(currentActiveAnswers, d.simplifiedAnswer)
+    if ($selectedPartyIds2.length === 0) {
+      $selectedPartyIds2 = partyIds;
+    } else if ($selectedPartyIds2.every(d => partyIds.includes(d))) {
+      $selectedPartyIds2 = $selectedPartyIds2.filter(
+        d => !partyIds.includes(d)
       );
-    })
-    .y(
-      (d, i) =>
-        -rowHeight / 2 +
-        Math.floor(i / 3) * 2 * rowHeight +
-        (i % 3 === 0 ? -rowHeight / 4 : i % 3 === 2 ? rowHeight / 4 : 0)
-    )
-    .curve(curveMonotoneY);
-
-  $: isFilteredParty = party => {
-    const tmp = $selectedAnswers.filter(d => d !== undefined);
-    return tmp.length === 0
-      ? false
-      : tmp.every(s =>
-          party.data.find(
-            d =>
-              d.simplifiedAnswer === s.simplifiedAnswer &&
-              d.question_id === s.questionId
-          )
-        );
-  };
-
-  function allAgree(questionId) {
-    //TODO:
-    return false;
+    } else if ($selectedPartyIds2.some(d => partyIds.includes(d))) {
+      $selectedPartyIds2 = $selectedPartyIds2.filter(d => partyIds.includes(d));
+    } else {
+      $selectedPartyIds2 = partyIds;
+    }
   }
+
+  $: includesSelectedPartyIds = opinion =>
+    $selectedPartyIds2.length > 0 &&
+    $selectedPartyIds2.every(d => opinion.parties.map(p => p.id).includes(d));
 </script>
 
-<svg width="620" height="3500">
-  <g transform="translate(10, 100)">
-    <g>
-      {#each filteredParties as party, i}
-        <path
-          d={partyLine(party.data.reduce((acc, cur) => acc.concat([
-                  cur,
-                  cur,
-                  cur
-                ]), []))}
-          style="stroke: {!isFilteredParty(party) ? '#ccc' : party.liberalConservative < 50 ? 'black' : 'black'}; fill: none; stroke-dasharray: {isFilteredParty(party) ? 'none' : '2 2'};" />
-      {/each}
-    </g>
-    {#each $activeQuestions as question, i}
-      <g transform="translate(0, {i * 2 * rowHeight})">
-        {#each answerValues as answer, j}
-          <g
-            transform="translate({10 + x(j)}, 0)"
-            on:click={() => toggleAnswer(i, answer.value, question.id)}>
-            <rect
-              x={-barWidth}
-              y={-rowHeight}
-              width={2 * barWidth + 13 * barWidth}
-              height={rowHeight - 2}
-              style="opacity: 0.5; fill: {$selectedAnswers[i] && $selectedAnswers[i].simplifiedAnswer === answer.value ? answer.color : getBackgroundColor(question.id, answer.value)}; stroke: #ccc;" />
-            {#if !$activeAnswers
-              .get(question.id)
-              .has(answer.value) && [100, 50, 0].includes(answer.value)}
-              <text
-                style="font-size: 12px; text-anchor: middle; fill: hsl(30, 97%, 60%); dominant-baseline: middle;">
-                <tspan x={(13 * barWidth) / 2} y={-14 - 3 * 17}>
-                  <tspan style="font-size: 16px;">
-                    {$selectedCountry.seats}
-                  </tspan>
-                  seats representing
-                </tspan>
-                <tspan x={(13 * barWidth) / 2} y={-14 - 2 * 17}>
-                  {$selectedCountry.name}
-                </tspan>
-                <tspan x={(13 * barWidth) / 2} y={-14 - 1 * 17}>
-                  {#if answer.value === 0}
-                    won't disagree
-                  {:else if answer.value === 50}
-                    won't have a neutral opinion
-                  {:else}won't agree {/if}
-                </tspan>
-                <tspan x={(13 * barWidth) / 2} y={-14 - 0 * 17}>
-                  despite the outcome
-                </tspan>
-              </text>
-            {/if}
-            {#if $activeAnswers.get(question.id).has(answer.value)}
-              {#each $activeAnswers
-                .get(question.id)
-                .get(answer.value) as partyAnswer, p}
-                <rect
-                  x={getOffset($activeAnswers
-                      .get(question.id)
-                      .get(answer.value), answer.value) + p * barWidth}
-                  y={(-1.5 * rowHeight) / 2}
-                  width={barWidth}
-                  height={rowHeight / 2}
-                  style="fill: {answer.color}; stroke: black;" />
-              {/each}
-            {/if}
-          </g>
+<style>
+  .answer {
+    fill: #eee;
+    stroke: #ccc;
+  }
+
+  .answer:hover {
+    fill: #ddd;
+    cursor: pointer;
+  }
+
+  .party-answer {
+    stroke: black;
+  }
+</style>
+
+<svg width="620" height={22 * 2 * rowHeight + 22}>
+  <g transform="translate(10, 22)">
+    {#each $opinionBlocks as opinion}
+      <rect
+        x={xc(opinion.answer.simplifiedValue)}
+        y={y(opinion.question.id)}
+        width={answerWidth}
+        height={rowHeight}
+        on:click={() => updateSelectedPartyIds(opinion)}
+        class="answer"
+        style="fill: {includesSelectedPartyIds(opinion) ? opinion.answer.color : '#eee'}; fill-opacity: {includesSelectedPartyIds(opinion) ? 0.4 : 1}" />
+    {/each}
+    <!-- style="fill: {isSelectedAnswer(opinion) ? opinion.answer.color : '#eee'}; fill-opacity: {isSelectedAnswer(opinion) ? 0.4 : 1}" /> -->
+    {#each $allParties as party}
+      <path
+        transform="translate({barWidth / 2}, {rowHeight})"
+        d={getPath(party.id, filterOpinionsByParty(party).reduce((acc, cur) => acc.concat(
+                [cur, cur, cur]
+              ), []))}
+        style="fill: none; stroke: {$selectedPartyIds2.includes(party.id) ? '#555' : '#ccc'}; stroke-dasharray: {$selectedPartyIds2.includes(party.id) ? 'none' : '2 2'};" />
+    {/each}
+
+    {#each $opinionBlocks as block}
+      <g
+        transform="translate({xc(block.answer.simplifiedValue)}, {y(block.question.id)})">
+        {#each block.parties as party, i}
+          <rect
+            x={xOffset(block) + i * barWidth}
+            y={rowHeight / 4}
+            width={barWidth}
+            height={rowHeight / 2}
+            style="fill: {$selectedPartyIds2.includes(party.id) || $selectedPartyIds2.length === 0 ? block.answer.color : '#ccc'}; fill-opacity: {$selectedPartyIds2.includes(party.id) ? 1 : 0.4};"
+            class="party-answer" />
         {/each}
       </g>
     {/each}
