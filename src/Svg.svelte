@@ -7,10 +7,10 @@
 
   $: console.log("$opinions", $opinions);
   $: console.log("$allParties", $allParties);
-  $: console.log("$selectedPartyIds2", $selectedPartyIds);
+  $: console.log("$selectedPartyIds", $selectedPartyIds);
 
   let rowHeight = 60;
-  let barWidth = 10;
+  let barWidth = 540 / 4 / 15;
   let answerWidth = 540 / 4;
   let hoverParty;
   let mousePos;

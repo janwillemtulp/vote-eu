@@ -9,10 +9,12 @@
     activeQuestions,
     activeParties,
     allCountries,
+    allParties,
     opinions
   } from "./store.js";
   import Svg from "./Svg.svelte";
   import CountryButton from "./CountryButton.svelte";
+  import Question from "./Question.svelte";
 
   let innerWidth = 0;
   let innerHeight = 0;
@@ -59,14 +61,9 @@
   $: console.log($allCountries);
   $: console.log("opinions", $opinions);
 
-  $: answerValuesRemaining = question =>
-    $opinions
-      .filter(d => d.question.id === question.id)
-      .filter(
-        d =>
-          d.parties.map(d => d.id).filter(d => $selectedPartyIds.includes(d))
-            .length > 0
-      );
+  $: filteredParties = $allParties.filter(d =>
+    $selectedPartyIds.includes(d.id)
+  );
 </script>
 
 <style>
@@ -103,14 +100,9 @@
     font-family: "Libre Baskerville", serif;
   }
 
-  .question {
-    height: 120px;
-    margin: 0 10px 0 0;
-    text-align: right;
-  }
-
   h1 {
     margin-bottom: 30px;
+    margin-left: 200px;
   }
 
   h1 span {
@@ -133,23 +125,34 @@
   .opinion-labels {
     margin-left: 200px;
   }
+
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+  li {
+    font-size: 18px;
+  }
 </style>
 
 <svelte:window bind:innerWidth bind:innerHeight />
 
 <main>
   <div>
-    {#each $activeQuestions as question, i}
-      <p
-        class="question"
-        style="font-weight: {answerValuesRemaining(question).length === 1 ? 'bold' : 'normal'}; color: {answerValuesRemaining(question).length === 1 ? answerValuesRemaining(question)[0].answer.color : 'black'}">
-        {question.text}
-      </p>
+    {#each $activeQuestions as question}
+      <Question {question} />
     {/each}
   </div>
   <Svg containerHeight={innerHeight - 150 - 100} />
   <aside>
-    <p style="position: fixed;">test</p>
+    <div style="position: fixed;">
+      <h4>Parties matching your selection</h4>
+      <ul>
+        {#each filteredParties as party}
+          <li>{party.name_short}</li>
+        {/each}
+      </ul>
+    </div>
   </aside>
 </main>
 
