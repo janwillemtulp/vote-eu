@@ -110,6 +110,7 @@
     background-color: white;
     box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.2);
     padding: 20px;
+    z-index: 1000;
   }
 
   .popup h2 {

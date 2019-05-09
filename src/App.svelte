@@ -7,7 +7,6 @@
     selectedPartyIds,
     activeData,
     activeQuestions,
-    activeParties,
     allCountries,
     allParties,
     opinions
@@ -67,6 +66,12 @@
     .sort((a, b) =>
       a.name_short < b.name_short ? -1 : a.name_short > b.name_short ? 1 : 0
     );
+
+  $: overlap = $opinions.filter(d =>
+    $selectedPartyIds.every(p => d.parties.map(d => d.id).includes(p))
+  ).length;
+
+  $: difference = $activeQuestions.length - overlap;
 </script>
 
 <style>
@@ -112,6 +117,7 @@
     font-size: 16px;
     font-family: "Source Sans Pro", sans-serif;
     font-style: italic;
+    font-weight: normal;
   }
 
   main {
@@ -123,6 +129,7 @@
 
   aside {
     margin-left: 10px;
+    background-color: #eee;
   }
 
   aside div {
@@ -131,19 +138,36 @@
 
   aside .inner {
     position: fixed;
-    padding-bottom: 100px;
   }
 
   aside .inner .matching-parties {
     overflow: scroll;
-    height: calc(100vh - 150px);
+    padding-bottom: 100px;
   }
 
-  aside h4 {
-    margin-top: 0;
+  aside h2:not(:first-child) {
+    margin-top: 100px;
+  }
+
+  aside h2:first-child {
+    margin: 0;
+  }
+
+  aside em {
+    font-style: normal;
+    font-weight: bold;
+  }
+
+  aside h2 {
     font-family: "Source Sans Pro", sans-serif;
     text-transform: uppercase;
     letter-spacing: 1px;
+    font-weight: normal;
+    margin-bottom: 0;
+  }
+
+  aside p {
+    margin: 0;
   }
 
   .opinion-labels {
@@ -169,6 +193,18 @@
     margin-top: 3px;
     text-align: right;
   }
+
+  .big-number {
+    font-family: "Libre Baskerville", serif;
+    font-size: 48px;
+  }
+
+  .big-number span {
+    font-size: 14px;
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: bold;
+    margin-left: -10px;
+  }
 </style>
 
 <svelte:window bind:innerWidth bind:innerHeight />
@@ -181,30 +217,76 @@
   </div>
   <Svg containerHeight={innerHeight - 150 - 100} />
   <aside>
-    <div class="inner">
-      <h4>Matching parties</h4>
-      <div class="matching-parties">
-        {#each filteredParties as party}
-          <div class="matching-party">
-            <h3>{party.name_short}</h3>
-            <p>{party.name_full.replace(/(.*)\(.*\)/gi, '$1')}</p>
-            <PartyPosition
-              labelLeft="left"
-              labelRight="right"
-              position={party.leftRight} />
-            <PartyPosition
-              labelLeft="liberal/pro-EU"
-              labelRight="conservative/anti-EU"
-              position={party.liberalConservative} />
-            <div class="position-remark">
-              positions are based on
-              {22 - party.noOpinionCount}
-              opinions
+    {#if $selectedPartyIds.length > 0}
+      <div class="inner">
+        {#if difference > 0}
+          <h2>Overlap</h2>
+          <div>
+            <div class="big-number">
+              {overlap}
+              <span>overlapping positions</span>
             </div>
+            <p>
+              For
+              <em>
+                {overlap}
+                of the
+                {$activeQuestions.length}
+                (
+                {Math.round((overlap / $activeQuestions.length) * 100)}
+                %)
+              </em>
+              positions all the matching parties have
+              <em>exactly the same opinion</em>
+              .
+            </p>
           </div>
-        {/each}
+          <h2>Difference</h2>
+          <div>
+            <div class="big-number">
+              {difference}
+              <span>different positions</span>
+            </div>
+            <p>
+              For
+              <em>
+                {difference}
+                of the
+                {$activeQuestions.length}
+                (
+                {Math.round((difference / $activeQuestions.length) * 100)}
+                %)
+              </em>
+              positions some of the matching parties have
+              <em>a different opinion</em>
+              from the other matching parties.
+            </p>
+          </div>
+        {/if}
+        <h2>Matching part{difference === 0 ? 'y' : 'ies'}</h2>
+        <div class="matching-parties">
+          {#each filteredParties as party}
+            <div class="matching-party">
+              <h3>{party.name_short}</h3>
+              <p>{party.name_full.replace(/(.*)\(.*\)/gi, '$1')}</p>
+              <PartyPosition
+                labelLeft="left"
+                labelRight="right"
+                position={party.leftRight} />
+              <PartyPosition
+                labelLeft="liberal/pro-EU"
+                labelRight="conservative/anti-EU"
+                position={party.liberalConservative} />
+              <div class="position-remark">
+                positions are calculated from
+                {22 - party.noOpinionCount}
+                opinions
+              </div>
+            </div>
+          {/each}
+        </div>
       </div>
-    </div>
+    {/if}
   </aside>
 </main>
 

@@ -1,24 +1,30 @@
 <script>
   import { scaleLinear } from "d3-scale";
+  import { interpolateHsl } from "d3-interpolate";
 
   let width = 200;
+  let sideMargin = 0;
   export let labelLeft;
   export let labelRight;
   export let position;
 
   let x = scaleLinear()
     .domain([0, 100])
-    .range([0, width]);
+    .range([sideMargin, width - sideMargin]);
 
+  // let c = scaleLinear()
+  //   .domain([0, 50, 100])
+  //   .range(["hsl(170, 70%, 40%)", "hsl(340, 0%, 50%)", "hsl(170, 70%, 50%)"]);
   let c = scaleLinear()
     .domain([0, 50, 100])
-    .range(["hsl(170, 50%, 50%)", "hsl(170, 0%, 80%)", "hsl(170, 50%, 50%)"]);
+    .range(["hsl(120, 72%, 45%)", "hsl(200, 0%, 45%)", "hsl(280, 72%, 45%)"])
+    .interpolate(interpolateHsl);
 </script>
 
 <style>
   .party-position {
     height: 30px;
-    background-color: #f4f4f4;
+    /* background-color: #eee; */
   }
 
   .labels {
@@ -31,28 +37,23 @@
     white-space: nowrap;
   }
 
-  .label-left {
-    margin-left: 3px;
-  }
-
   .label-right {
     text-align: right;
-    margin-right: 3px;
   }
 
   .position {
     height: 6px;
     width: 16px;
     margin-left: -8px;
-    background-color: black;
     position: absolute;
-    top: 6px;
+    top: 7px;
   }
 
   .position-container {
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px dashed #ccc;
     position: relative;
-    height: 12px;
+    height: 10px;
+    margin-bottom: 2px;
   }
 </style>
 
@@ -65,12 +66,12 @@
   <div class="labels">
     <span
       class="label label-left"
-      style="color: {position < 50 ? 'black' : '#999'}">
+      style="color: {position < 50 ? c(position) : '#aaa'}">
       {labelLeft}
     </span>
     <span
       class="label label-right"
-      style="color: {position > 50 ? 'black' : '#999'}">
+      style="color: {position > 50 ? c(position) : '#aaa'}">
       {labelRight}
     </span>
   </div>

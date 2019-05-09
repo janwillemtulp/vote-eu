@@ -12,7 +12,7 @@
             .length > 0
       );
 
-  $: marked = () => answerValuesRemaining().length === 1
+  $: marked = () => answerValuesRemaining().length === 1;
 </script>
 
 <style>
@@ -22,14 +22,9 @@
     text-align: right;
     font-weight: normal;
   }
-
-  .marked {
-    font-weight: bold;
-  }
 </style>
 
 <p
-  class:marked={marked()}
   style="color: {marked() ? answerValuesRemaining()[0].answer.color : 'black'}">
   {question.text}
 </p>
