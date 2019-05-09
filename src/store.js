@@ -144,7 +144,32 @@ export const allParties = derived(opinions, opinions =>
   opinions.reduce((acc, cur) => {
     cur.parties.forEach(c => {
       if (!acc.find(d => d.id === c.id)) {
-        acc.push(c)
+        const partyOpinions = opinions.filter(o =>
+          o.parties.map(d => d.id).includes(c.id)
+        )
+
+        const lrOpinions = partyOpinions.filter(o => o.question.xy_lr !== 0)
+        const lcOpinions = partyOpinions.filter(o => o.question.xy_lc !== 0)
+
+        acc.push({
+          ...c,
+          leftRight:
+            lrOpinions.reduce(
+              (acc, cur) =>
+                acc + cur.question.xy_lr * (cur.answer.value - 50) + 50,
+              0
+            ) / lrOpinions.length,
+          liberalConservative:
+            100 -
+            lcOpinions.reduce(
+              (acc, cur) =>
+                acc + cur.question.xy_lc * (cur.answer.value - 50) + 50,
+              0
+            ) /
+              lcOpinions.length,
+          noOpinionCount: partyOpinions.filter(d => d.answer.value === null)
+            .length
+        })
       }
     })
 

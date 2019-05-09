@@ -15,6 +15,7 @@
   import Svg from "./Svg.svelte";
   import CountryButton from "./CountryButton.svelte";
   import Question from "./Question.svelte";
+  import PartyPosition from "./PartyPosition.svelte";
 
   let innerWidth = 0;
   let innerHeight = 0;
@@ -61,9 +62,11 @@
   $: console.log($allCountries);
   $: console.log("opinions", $opinions);
 
-  $: filteredParties = $allParties.filter(d =>
-    $selectedPartyIds.includes(d.id)
-  );
+  $: filteredParties = $allParties
+    .filter(d => $selectedPartyIds.includes(d.id))
+    .sort((a, b) =>
+      a.name_short < b.name_short ? -1 : a.name_short > b.name_short ? 1 : 0
+    );
 </script>
 
 <style>
@@ -106,7 +109,7 @@
   }
 
   h1 span {
-    font-size: 14px;
+    font-size: 16px;
     font-family: "Source Sans Pro", sans-serif;
     font-style: italic;
   }
@@ -122,16 +125,49 @@
     margin-left: 10px;
   }
 
+  aside div {
+    width: 200px;
+  }
+
+  aside .inner {
+    position: fixed;
+    padding-bottom: 100px;
+  }
+
+  aside .inner .matching-parties {
+    overflow: scroll;
+    height: calc(100vh - 150px);
+  }
+
+  aside h4 {
+    margin-top: 0;
+    font-family: "Source Sans Pro", sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
   .opinion-labels {
     margin-left: 200px;
   }
 
-  ul {
-    list-style: none;
-    padding: 0;
+  .matching-party {
+    margin-bottom: 30px;
   }
-  li {
-    font-size: 18px;
+
+  .matching-party h3 {
+    margin: 0;
+  }
+
+  .matching-party p {
+    margin-top: 0;
+    margin-bottom: 8px;
+  }
+
+  .position-remark {
+    font-size: 10px;
+    font-style: italic;
+    margin-top: 3px;
+    text-align: right;
   }
 </style>
 
@@ -145,13 +181,29 @@
   </div>
   <Svg containerHeight={innerHeight - 150 - 100} />
   <aside>
-    <div style="position: fixed;">
-      <h4>Parties matching your selection</h4>
-      <ul>
+    <div class="inner">
+      <h4>Matching parties</h4>
+      <div class="matching-parties">
         {#each filteredParties as party}
-          <li>{party.name_short}</li>
+          <div class="matching-party">
+            <h3>{party.name_short}</h3>
+            <p>{party.name_full.replace(/(.*)\(.*\)/gi, '$1')}</p>
+            <PartyPosition
+              labelLeft="left"
+              labelRight="right"
+              position={party.leftRight} />
+            <PartyPosition
+              labelLeft="liberal/pro-EU"
+              labelRight="conservative/anti-EU"
+              position={party.liberalConservative} />
+            <div class="position-remark">
+              positions are based on
+              {22 - party.noOpinionCount}
+              opinions
+            </div>
+          </div>
         {/each}
-      </ul>
+      </div>
     </div>
   </aside>
 </main>

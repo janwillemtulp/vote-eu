@@ -18,12 +18,13 @@
   }
 
   button:hover {
-    background-color: hsl(39, 100%, 85%);
+    background-color: hsl(46, 92%, 85%);
     cursor: pointer;
   }
 
   .selected {
-    background-color: hsl(39, 100%, 50%);
+    background-color: hsl(224, 80%, 32%);
+    color: hsl(46, 92%, 62%);
   }
 </style>
 

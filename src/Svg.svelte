@@ -106,7 +106,7 @@
     position: absolute;
     left: 400px;
     top: 400px;
-    width: 300px;
+    width: 400px;
     background-color: white;
     box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.2);
     padding: 20px;
@@ -136,7 +136,7 @@
           class="answer"
           style="fill: {includesSelectedPartyIds(opinion) ? opinion.answer.color : '#eee'}; fill-opacity: {includesSelectedPartyIds(opinion) ? 0.4 : 1}" />
       {/each}
-      <!-- style="fill: {isSelectedAnswer(opinion) ? opinion.answer.color : '#eee'}; fill-opacity: {isSelectedAnswer(opinion) ? 0.4 : 1}" /> -->
+
       {#each $allParties as party}
         <path
           transform="translate({barWidth / 2}, {rowHeight})"
