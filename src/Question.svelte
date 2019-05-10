@@ -25,6 +25,9 @@
 </style>
 
 <p
-  style="color: {marked() ? answerValuesRemaining()[0].answer.color : 'black'}">
-  {question.text}
+  style="color: {marked() ? answerValuesRemaining()[0].answer.color : 'black'};">
+  <span
+    style="padding: 0 0 0 4px; background-color: {marked() || $selectedPartyIds.length === 0 ? 'transparent' : 'hsl(46, 92%, 62%)'};">
+    {question.text}
+  </span>
 </p>

@@ -86,7 +86,8 @@
 <style>
   .answer {
     fill: #eee;
-    stroke: #ccc;
+    stroke: #fff;
+    stroke-width: 2;
   }
 
   .answer:hover {
@@ -121,6 +122,7 @@
   .popup h4 {
     margin: 3px 0;
     font-family: "Source Sans Pro", sans-serif;
+    font-weight: normal;
   }
 </style>
 
@@ -156,7 +158,7 @@
               y={rowHeight / 4}
               width={barWidth}
               height={rowHeight / 2}
-              style="fill: {$selectedPartyIds.includes(party.id) || $selectedPartyIds.length === 0 ? opinion.answer.color : '#ccc'}; fill-opacity: {$selectedPartyIds.includes(party.id) ? 1 : 0.4};"
+              style="fill: {$selectedPartyIds.includes(party.id) ? opinion.answer.color : opinion.answer.colorLight};"
               class="party-answer"
               on:click={() => updateSelectedPartyIds(opinion)}
               on:mousemove={e => (mousePos = [e.clientX, e.offsetY])}

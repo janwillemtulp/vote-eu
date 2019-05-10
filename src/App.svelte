@@ -1,4 +1,5 @@
 <script>
+  import { fade } from "svelte/transition";
   import { csv } from "d3-fetch";
   import { rollup } from "d3-array";
   import {
@@ -15,6 +16,7 @@
   import CountryButton from "./CountryButton.svelte";
   import Question from "./Question.svelte";
   import PartyPosition from "./PartyPosition.svelte";
+  import SameOpinion from "./SameOpinion.svelte";
 
   let innerWidth = 0;
   let innerHeight = 0;
@@ -129,14 +131,11 @@
 
   aside {
     margin-left: 10px;
-    background-color: #eee;
-  }
-
-  aside div {
-    width: 200px;
+    /* background-color: #eee; */
   }
 
   aside .inner {
+    width: 190px;
     position: fixed;
   }
 
@@ -150,7 +149,7 @@
   }
 
   aside h2:first-child {
-    margin: 0;
+    margin: 0 0 10px 0;
   }
 
   aside em {
@@ -170,12 +169,15 @@
     margin: 0;
   }
 
-  .opinion-labels {
+  .container-headers {
+    display: grid;
+    width: 540px;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
     margin-left: 200px;
   }
 
   .matching-party {
-    margin-bottom: 30px;
+    margin-bottom: 10px;
   }
 
   .matching-party h3 {
@@ -191,19 +193,34 @@
     font-size: 10px;
     font-style: italic;
     margin-top: 3px;
-    text-align: right;
   }
 
-  .big-number {
+  .overlap-diff {
+    padding: 10px;
+    background-color: #eee;
+  }
+
+  .diff {
+    margin-bottom: 30px;
+  }
+
+  .overlap {
+    margin-bottom: 3px;
+  }
+
+  .overlap-diff .value {
     font-family: "Libre Baskerville", serif;
-    font-size: 48px;
+    font-size: 18px;
   }
 
-  .big-number span {
-    font-size: 14px;
-    font-family: "Source Sans Pro", sans-serif;
+  .overlap-diff .label {
     font-weight: bold;
-    margin-left: -10px;
+    display: block;
+  }
+
+  .overlap-diff .label span {
+    padding: 0 2px;
+    background-color: rgb(247, 206, 69);
   }
 </style>
 
@@ -219,71 +236,40 @@
   <aside>
     {#if $selectedPartyIds.length > 0}
       <div class="inner">
-        {#if difference > 0}
-          <h2>Overlap</h2>
-          <div>
-            <div class="big-number">
-              {overlap}
-              <span>overlapping positions</span>
+        <h2>Matching part{difference === 0 ? 'y' : 'ies'}</h2>
+        {#if $selectedPartyIds.length > 1}
+          <div class="overlap-diff overlap">
+            <div>
+              <span class="label">same opinion:</span>
+              <span class="value">{overlap}</span>
+              statements
+              {`(${Math.round((overlap / $activeQuestions.length) * 100)}%)`}
             </div>
-            <p>
-              For
-              <em>
-                {overlap}
-                of the
-                {$activeQuestions.length}
-                (
-                {Math.round((overlap / $activeQuestions.length) * 100)}
-                %)
-              </em>
-              positions all the matching parties have
-              <em>exactly the same opinion</em>
-              .
-            </p>
           </div>
-          <h2>Difference</h2>
-          <div>
-            <div class="big-number">
-              {difference}
-              <span>different positions</span>
+          <div class="overlap-diff diff">
+            <div>
+              <span class="label">
+                <span>mixed</span>
+                opinions:
+              </span>
+              <span class="value">{difference}</span>
+              statements
+              {`(${Math.round((difference / $activeQuestions.length) * 100)}%)`}
             </div>
-            <p>
-              For
-              <em>
-                {difference}
-                of the
-                {$activeQuestions.length}
-                (
-                {Math.round((difference / $activeQuestions.length) * 100)}
-                %)
-              </em>
-              positions some of the matching parties have
-              <em>a different opinion</em>
-              from the other matching parties.
-            </p>
           </div>
         {/if}
-        <h2>Matching part{difference === 0 ? 'y' : 'ies'}</h2>
-        <div class="matching-parties">
+        <div class="matching-parties" transition:fade={{ duration: 200 }}>
           {#each filteredParties as party}
             <div class="matching-party">
               <h3>{party.name_short}</h3>
               <p>{party.name_full.replace(/(.*)\(.*\)/gi, '$1')}</p>
-              <PartyPosition
-                labelLeft="left"
-                labelRight="right"
-                position={party.leftRight} />
-              <PartyPosition
-                labelLeft="liberal/pro-EU"
-                labelRight="conservative/anti-EU"
-                position={party.liberalConservative} />
-              <div class="position-remark">
-                positions are calculated from
-                {22 - party.noOpinionCount}
-                opinions
-              </div>
             </div>
           {/each}
+          <div class="position-remark">
+            positions are calculated from each party's opinions on these
+            {$activeQuestions.length}
+            statements, where "no opinion" is ignored in the calculation.
+          </div>
         </div>
       </div>
     {/if}
@@ -310,7 +296,7 @@
       <span> {$selectedCountry.seats} seats in EU parliament</span>
     </h1>
 
-    <div class="opinion-labels">
+    <div class="container-headers">
       <div class="opinion-label" style="color: hsl(200, 50%, 50%);">Agree</div>
       <div class="opinion-label" style="color: #999;">Neutral</div>
       <div class="opinion-label" style="color: hsl(0, 50%, 50%);">

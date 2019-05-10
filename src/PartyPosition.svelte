@@ -7,6 +7,8 @@
   export let labelLeft;
   export let labelRight;
   export let position;
+  export let colorLeft = "hsl(120, 72%, 45%)";
+  export let colorRight = "hsl(280, 72%, 45%)";
 
   let x = scaleLinear()
     .domain([0, 100])
@@ -17,13 +19,13 @@
   //   .range(["hsl(170, 70%, 40%)", "hsl(340, 0%, 50%)", "hsl(170, 70%, 50%)"]);
   let c = scaleLinear()
     .domain([0, 50, 100])
-    .range(["hsl(120, 72%, 45%)", "hsl(200, 0%, 45%)", "hsl(280, 72%, 45%)"])
+    .range([colorLeft, "hsl(200, 0%, 55%)", colorRight])
     .interpolate(interpolateHsl);
 </script>
 
 <style>
   .party-position {
-    height: 30px;
+    height: 16px;
     /* background-color: #eee; */
   }
 
@@ -42,11 +44,11 @@
   }
 
   .position {
-    height: 6px;
+    height: 8px;
     width: 16px;
     margin-left: -8px;
     position: absolute;
-    top: 7px;
+    top: 6px;
   }
 
   .position-container {
@@ -63,7 +65,7 @@
       class="position"
       style="left: {x(position)}; background-color: {c(position)};" />
   </div>
-  <div class="labels">
+  <!-- <div class="labels">
     <span
       class="label label-left"
       style="color: {position < 50 ? c(position) : '#aaa'}">
@@ -74,5 +76,5 @@
       style="color: {position > 50 ? c(position) : '#aaa'}">
       {labelRight}
     </span>
-  </div>
+  </div> -->
 </div>

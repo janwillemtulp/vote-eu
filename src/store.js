@@ -67,6 +67,12 @@ answerColors.set(50, '#999')
 answerColors.set(0, 'hsl(0, 50%, 50%)')
 answerColors.set(null, 'hsl(310, 50%, 70%)')
 
+const answerColorsLight = new Map()
+answerColorsLight.set(100, 'hsl(204, 35%, 78%)')
+answerColorsLight.set(50, 'hsl(0, 0%, 80%)')
+answerColorsLight.set(0, 'hsl(3, 35%, 75%)')
+answerColorsLight.set(null, 'hsl(307, 30%, 83%)')
+
 const answerLabels = new Map()
 answerLabels.set(100, 'Agree')
 answerLabels.set(50, 'Neutral')
@@ -100,6 +106,7 @@ export const opinions = derived(activeData, activeData =>
           value: cur.answer,
           simplifiedValue: cur.simplifiedAnswer,
           color: answerColors.get(cur.simplifiedAnswer),
+          colorLight: answerColorsLight.get(cur.simplifiedAnswer),
           label: answerLabels.get(cur.simplifiedAnswer)
         },
         country: {
