@@ -15,8 +15,7 @@
   import Svg from "./Svg.svelte";
   import CountryButton from "./CountryButton.svelte";
   import Question from "./Question.svelte";
-  import PartyPosition from "./PartyPosition.svelte";
-  import SameOpinion from "./SameOpinion.svelte";
+  import PoliticalPosition from "./PoliticalPosition.svelte";
 
   let innerWidth = 0;
   let innerHeight = 0;
@@ -137,24 +136,15 @@
   aside .inner {
     width: 190px;
     position: fixed;
+    padding-bottom: 100px;
   }
 
   aside .inner .matching-parties {
     overflow: scroll;
-    padding-bottom: 100px;
-  }
-
-  aside h2:not(:first-child) {
-    margin-top: 100px;
   }
 
   aside h2:first-child {
-    margin: 0 0 10px 0;
-  }
-
-  aside em {
-    font-style: normal;
-    font-weight: bold;
+    margin-top: 0;
   }
 
   aside h2 {
@@ -162,7 +152,8 @@
     text-transform: uppercase;
     letter-spacing: 1px;
     font-weight: normal;
-    margin-bottom: 0;
+    margin-bottom: 10px;
+    font-size: 16px;
   }
 
   aside p {
@@ -201,7 +192,7 @@
   }
 
   .diff {
-    margin-bottom: 30px;
+    margin-bottom: 10px;
   }
 
   .overlap {
@@ -222,6 +213,17 @@
     padding: 0 2px;
     background-color: rgb(247, 206, 69);
   }
+
+  .political-preference,
+  .political-ideology {
+    background-color: #eee;
+    padding: 10px;
+  }
+
+  .political-preference span,
+  .political-ideology span {
+    font-size: 12px;
+  }
 </style>
 
 <svelte:window bind:innerWidth bind:innerHeight />
@@ -235,7 +237,7 @@
   <Svg containerHeight={innerHeight - 150 - 100} />
   <aside>
     {#if $selectedPartyIds.length > 0}
-      <div class="inner">
+      <div class="inner" transition:fade={{ duration: 200 }}>
         <h2>Matching part{difference === 0 ? 'y' : 'ies'}</h2>
         {#if $selectedPartyIds.length > 1}
           <div class="overlap-diff overlap">
@@ -258,19 +260,66 @@
             </div>
           </div>
         {/if}
-        <div class="matching-parties" transition:fade={{ duration: 200 }}>
+        <div class="matching-parties">
           {#each filteredParties as party}
-            <div class="matching-party">
+            <div
+              class="matching-party"
+              style="background-color: {$selectedPartyIds.length === 1 ? 'rgb(179, 219, 186)' : 'transparent'}; padding: {$selectedPartyIds.length === 1 ? 10 : 0}px;">
               <h3>{party.name_short}</h3>
               <p>{party.name_full.replace(/(.*)\(.*\)/gi, '$1')}</p>
             </div>
           {/each}
-          <div class="position-remark">
-            positions are calculated from each party's opinions on these
-            {$activeQuestions.length}
-            statements, where "no opinion" is ignored in the calculation.
-          </div>
         </div>
+        <!-- {#if filteredParties.length === 1}
+          <h2>Political Ideology</h2>
+          <div class="political-ideology">
+            <PoliticalPosition
+              dimension="leftRight"
+              labelLeft="left"
+              labelRight="right" />
+            <PoliticalPosition
+              dimension="liberalConservative"
+              labelLeft="liberal/pro-EU"
+              labelRight="conservative/anti-EU" />
+            <div class="position-remark">
+              positions are calculated from each party's opinions on these
+              {$activeQuestions.length}
+              statements, "no opinion" is ignored in the calculation.
+            </div>
+          </div>
+          <h2>Political Preference</h2>
+          <div class="political-preference">
+            <div
+              style="display: grid; grid-template-columns: 1fr 1fr; font-size: 12px; margin-bottom: 5px; font-weight: bold;">
+              <span>none</span>
+              <span style="text-align: right;">strong</span>
+            </div>
+            <span>environmental protection</span>
+            <PoliticalPosition dimension="environment" />
+            <span>EU integration</span>
+            <PoliticalPosition dimension="eu" />
+            <span>liberal society</span>
+            <PoliticalPosition dimension="society" />
+            <span>law and order</span>
+            <PoliticalPosition dimension="law" />
+            <span>economic liberalisation</span>
+            <PoliticalPosition dimension="economy" />
+            <span>restrictive financial policy</span>
+            <PoliticalPosition dimension="finance" />
+            <span>restrictive immigration policy</span>
+            <PoliticalPosition dimension="immigration" />
+            <div
+              style="display: grid; grid-template-columns: 1fr 1fr; font-size: 12px; margin-bottom: 5px; font-weight: bold;">
+              <span>none</span>
+              <span style="text-align: right;">strong</span>
+            </div>
+            <div class="position-remark">
+              positions are calculated from each party's opinions on these
+              {$activeQuestions.length}
+              statements, "no opinion" is ignored in the calculation.
+            </div>
+          </div>
+        {/if} -->
       </div>
     {/if}
   </aside>

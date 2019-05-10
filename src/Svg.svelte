@@ -4,6 +4,7 @@
   import { extent } from "d3-array";
   import { line, curveMonotoneY } from "d3-shape";
   import { mouse, select } from "d3-selection";
+  import { color } from "d3-color";
 
   $: console.log("$opinions", $opinions);
   $: console.log("$allParties", $allParties);
@@ -13,6 +14,7 @@
   let barWidth = 540 / 4 / 15;
   let answerWidth = 540 / 4;
   let hoverParty;
+  let hover = undefined;
   let mousePos;
   let popupHeight;
   export let containerHeight;
@@ -73,13 +75,18 @@
     $selectedPartyIds.length > 0 &&
     $selectedPartyIds.every(d => opinion.parties.map(p => p.id).includes(d));
 
+  $: selectedPartiePaths = $allParties.filter(d => $selectedPartyIds.includes(d.id))
+  $: nonSelectedPartiePaths = $allParties.filter(d => !$selectedPartyIds.includes(d.id))
+
   function showPopup(info, e) {
     mousePos = [e.clientX, e.clientY];
     hoverParty = info;
+    hover = { question: info.question, answer: info.answer };
   }
 
   function hidePopup() {
     hoverParty = undefined;
+    hover = undefined;
   }
 </script>
 
@@ -124,6 +131,10 @@
     font-family: "Source Sans Pro", sans-serif;
     font-weight: normal;
   }
+
+  path {
+    pointer-events: none;
+  }
 </style>
 
 <div>
@@ -136,17 +147,34 @@
           width={answerWidth}
           height={rowHeight}
           on:click={() => updateSelectedPartyIds(opinion)}
+          on:mouseover={() => {
+            hover = opinion;
+          }}
+          on:mouseout={() => {
+            hover = undefined;
+          }}
           class="answer"
-          style="fill: {includesSelectedPartyIds(opinion) ? opinion.answer.color : '#eee'}; fill-opacity: {includesSelectedPartyIds(opinion) ? 0.4 : 1}" />
+          style="fill: {hover && hover.question.id === opinion.question.id && hover.answer.simplifiedValue === opinion.answer.simplifiedValue ? color(includesSelectedPartyIds(opinion) ? opinion.answer.colorLight : '#eee')
+                .darker(0.5)
+                .rgb() : color(includesSelectedPartyIds(opinion) ? opinion.answer.colorLight : '#eee')}; " />
       {/each}
 
-      {#each $allParties as party}
+      {#each nonSelectedPartiePaths as party}
         <path
           transform="translate({barWidth / 2}, {rowHeight})"
           d={getPath(party.id, filterOpinionsByParty(party).reduce((acc, cur) => acc.concat(
                   [cur, cur, cur]
                 ), []))}
-          style="fill: none; stroke: {$selectedPartyIds.includes(party.id) ? '#555' : '#ccc'}; stroke-dasharray: {$selectedPartyIds.includes(party.id) ? 'none' : '2 2'};" />
+          style="fill: none; stroke: rgba(0, 0, 0, 0.2); stroke-dasharray: 2 2;" />
+      {/each}
+
+      {#each selectedPartiePaths as party}
+        <path
+          transform="translate({barWidth / 2}, {rowHeight})"
+          d={getPath(party.id, filterOpinionsByParty(party).reduce((acc, cur) => acc.concat(
+                  [cur, cur, cur]
+                ), []))}
+          style="fill: none; stroke: #000; stroke-dasharray: none;" />
       {/each}
 
       {#each $opinions as opinion}

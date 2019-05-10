@@ -147,6 +147,21 @@ export const opinions = derived(activeData, activeData =>
 
 export const selectedPartyIds = writable([])
 
+function calculatePreference (partyOpinions, dimension) {
+  const filteredOpinions = partyOpinions.filter(
+    o => o.question[dimension] !== 0 && o.answer.value !== null
+  )
+
+  return (
+    filteredOpinions.reduce(
+      (acc, cur) =>
+        acc +
+        2 * Math.max(0, cur.question[dimension] * (cur.answer.value - 50)),
+      0
+    ) / filteredOpinions.length
+  )
+}
+
 export const allParties = derived(opinions, opinions =>
   opinions.reduce((acc, cur) => {
     cur.parties.forEach(c => {
@@ -160,22 +175,51 @@ export const allParties = derived(opinions, opinions =>
 
         acc.push({
           ...c,
-          leftRight:
-            lrOpinions.reduce(
-              (acc, cur) =>
-                acc + cur.question.xy_lr * (cur.answer.value - 50) + 50,
-              0
-            ) / lrOpinions.length,
-          liberalConservative:
-            100 -
-            lcOpinions.reduce(
-              (acc, cur) =>
-                acc + cur.question.xy_lc * (cur.answer.value - 50) + 50,
-              0
-            ) /
-              lcOpinions.length,
-          noOpinionCount: partyOpinions.filter(d => d.answer.value === null)
-            .length
+          spectrum: {
+            leftRight:
+              lrOpinions.reduce(
+                (acc, cur) =>
+                  acc + cur.question.xy_lr * (cur.answer.value - 50) + 50,
+                0
+              ) / lrOpinions.length,
+            liberalConservative:
+              100 -
+              lcOpinions.reduce(
+                (acc, cur) =>
+                  acc + cur.question.xy_lc * (cur.answer.value - 50) + 50,
+                0
+              ) /
+                lcOpinions.length,
+            environment: calculatePreference(
+              partyOpinions,
+              'environmental_protection'
+            ),
+            eu: calculatePreference(partyOpinions, 'european_integration'),
+            society: calculatePreference(partyOpinions, 'liberal_society'),
+            law: calculatePreference(partyOpinions, 'law_and_order'),
+            economy: calculatePreference(
+              partyOpinions,
+              'economic_liberalisation'
+            ),
+            finance: calculatePreference(
+              partyOpinions,
+              'restrictive_financial_policy'
+            ),
+            immigration: calculatePreference(
+              partyOpinions,
+              'restrictive_immigration_policy'
+            )
+          },
+          opinionCounts: {
+            noOpinion: partyOpinions.filter(d => d.answer.value === null)
+              .length,
+            shared: partyOpinions.filter(
+              d => d.answer.value !== null && d.parties.length > 1
+            ).length,
+            unique: partyOpinions.filter(
+              d => d.answer.value !== null && d.parties.length === 1
+            ).length
+          }
         })
       }
     })
