@@ -17,6 +17,7 @@
   let hover = undefined;
   let mousePos;
   let popupHeight;
+  let innerWidth;
   export let containerHeight;
 
   let xc = scaleOrdinal()
@@ -75,11 +76,15 @@
     $selectedPartyIds.length > 0 &&
     $selectedPartyIds.every(d => opinion.parties.map(p => p.id).includes(d));
 
-  $: selectedPartiePaths = $allParties.filter(d => $selectedPartyIds.includes(d.id))
-  $: nonSelectedPartiePaths = $allParties.filter(d => !$selectedPartyIds.includes(d.id))
+  $: selectedPartiePaths = $allParties.filter(d =>
+    $selectedPartyIds.includes(d.id)
+  );
+  $: nonSelectedPartiePaths = $allParties.filter(
+    d => !$selectedPartyIds.includes(d.id)
+  );
 
   function showPopup(info, e) {
-    mousePos = [e.clientX, e.clientY];
+    mousePos = [e.x, e.y];
     hoverParty = info;
     hover = { question: info.question, answer: info.answer };
   }
@@ -136,6 +141,8 @@
     pointer-events: none;
   }
 </style>
+
+<svelte:window bind:innerWidth />
 
 <div>
   <svg width="540" height={22 * 2 * rowHeight + 22}>
@@ -197,27 +204,29 @@
       {/each}
     </g>
   </svg>
-  <div
-    class="popup"
-    style="display: {hoverParty ? 'block' : 'none'}; left: {mousePos ? mousePos[0] + 20 : 0}px; top: {mousePos ? mousePos[1] : 0};"
-    bind:clientHeight={popupHeight}>
-    {#if hoverParty}
-      <h2>{hoverParty.party.name_short}</h2>
-      <h4>{hoverParty.party.name_full}</h4>
-      <h4 style="color: {hoverParty.answer.color}">
-        {hoverParty.answer.label}
-      </h4>
-      <p>
-        <em>Motivation:</em>
-        {hoverParty.parties.find(d => d.id === hoverParty.party.id).motivation.text}
-      </p>
-      <p>
-        <em>source:</em>
-        <a
-          href={hoverParty.parties.find(d => d.id === hoverParty.party.id).motivation.link}>
-          {hoverParty.parties.find(d => d.id === hoverParty.party.id).motivation.source}
-        </a>
-      </p>
-    {/if}
-  </div>
+  {#if mousePos}
+    <div
+      class="popup"
+      style="display: {hoverParty ? 'block' : 'none'}; left: {mousePos[0] < innerWidth / 2 ? mousePos[0] + 20 : mousePos[0] - 20 - 40 - 400}px; top: {mousePos[1]};"
+      bind:clientHeight={popupHeight}>
+      {#if hoverParty}
+        <h2>{hoverParty.party.name_short}</h2>
+        <h4>{hoverParty.party.name_full}</h4>
+        <h4 style="color: {hoverParty.answer.color}">
+          {hoverParty.answer.label}
+        </h4>
+        <p>
+          <em>Motivation:</em>
+          {hoverParty.parties.find(d => d.id === hoverParty.party.id).motivation.text}
+        </p>
+        <p>
+          <em>source:</em>
+          <a
+            href={hoverParty.parties.find(d => d.id === hoverParty.party.id).motivation.link}>
+            {hoverParty.parties.find(d => d.id === hoverParty.party.id).motivation.source}
+          </a>
+        </p>
+      {/if}
+    </div>
+  {/if}
 </div>

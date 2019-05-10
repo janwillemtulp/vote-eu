@@ -114,7 +114,11 @@
     margin-left: 200px;
   }
 
-  h1 span {
+  header h1 {
+    position: relative;
+  }
+
+  h1 .byline {
     font-size: 16px;
     font-family: "Source Sans Pro", sans-serif;
     font-style: italic;
@@ -141,6 +145,12 @@
 
   aside .inner .matching-parties {
     overflow: scroll;
+    background-color: #eee;
+    padding: 10px;
+  }
+
+  .matching-parties .label {
+    margin-bottom: 5px;
   }
 
   aside h2:first-child {
@@ -153,7 +163,7 @@
     letter-spacing: 1px;
     font-weight: normal;
     margin-bottom: 10px;
-    font-size: 16px;
+    font-size: 20px;
   }
 
   aside p {
@@ -169,7 +179,20 @@
 
   .matching-party {
     margin-bottom: 10px;
+    margin-left: 0px;
+    padding: 10px;
   }
+
+  .multi {
+    padding: 0;
+  }
+
+  /* .multi:before {
+    content: "\25B8";
+    position: absolute;
+    left: 0px;
+    margin-top: 0px;
+  } */
 
   .matching-party h3 {
     margin: 0;
@@ -180,23 +203,16 @@
     margin-bottom: 8px;
   }
 
-  .position-remark {
+  /* .position-remark {
     font-size: 10px;
     font-style: italic;
     margin-top: 3px;
-  }
+  } */
 
   .overlap-diff {
     padding: 10px;
     background-color: #eee;
-  }
-
-  .diff {
-    margin-bottom: 10px;
-  }
-
-  .overlap {
-    margin-bottom: 3px;
+    margin-bottom: 2px;
   }
 
   .overlap-diff .value {
@@ -204,7 +220,8 @@
     font-size: 18px;
   }
 
-  .overlap-diff .label {
+  .overlap-diff .label,
+  .matching-parties .label {
     font-weight: bold;
     display: block;
   }
@@ -214,7 +231,15 @@
     background-color: rgb(247, 206, 69);
   }
 
-  .political-preference,
+  .flag {
+    font-size: 60px;
+    margin-top: 14px;
+    position: absolute;
+    left: -80px;
+    top: -32px;
+  }
+
+  /* .political-preference,
   .political-ideology {
     background-color: #eee;
     padding: 10px;
@@ -223,7 +248,7 @@
   .political-preference span,
   .political-ideology span {
     font-size: 12px;
-  }
+  } */
 </style>
 
 <svelte:window bind:innerWidth bind:innerHeight />
@@ -261,10 +286,13 @@
           </div>
         {/if}
         <div class="matching-parties">
+          {#if $selectedPartyIds.length > 1}
+            <span class="label">parties:</span>
+          {/if}
           {#each filteredParties as party}
             <div
               class="matching-party"
-              style="background-color: {$selectedPartyIds.length === 1 ? 'rgb(179, 219, 186)' : 'transparent'}; padding: {$selectedPartyIds.length === 1 ? 10 : 0}px;">
+              style="background-color: {$selectedPartyIds.length === 1 ? 'rgb(179, 219, 186)' : 'transparent'} ; padding: {$selectedPartyIds.length === 1 ? 10 : 0} px;">
               <h3>{party.name_short}</h3>
               <p>{party.name_full.replace(/(.*)\(.*\)/gi, '$1')}</p>
             </div>
@@ -341,8 +369,12 @@
     </div>
 
     <h1>
+      <span class="flag">🇪🇺</span>
       {$selectedCountry.name}
-      <span> {$selectedCountry.seats} seats in EU parliament</span>
+      <span class="byline">
+        {$selectedCountry.seats}
+        seats in EU parliament
+      </span>
     </h1>
 
     <div class="container-headers">
