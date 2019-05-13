@@ -412,7 +412,17 @@
 
 <footer>
   <div class="inner">
-    <p>concept & design by TULP interactive ©2019</p>
-    <a href="about.html" target="_blank" alt="about 2019 vote EU">about</a>
+    <p>
+      concept & design by
+      <a
+        href="http://tulpinteractive.com"
+        title="TULP interactive"
+        target="_blank">
+        TULP interactive
+      </a>
+    </p>
+    <a href="about.html" target="_blank" title="about 2019 vote EU">
+      about 2019 vote EU
+    </a>
   </div>
 </footer>
