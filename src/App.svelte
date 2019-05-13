@@ -92,8 +92,24 @@
     grid-template-columns: repeat(auto-fit, minmax(1px, 1fr));
   }
 
+  .clear-selection {
+    width: 115px;
+    justify-self: end;
+    margin-right: 10px;
+    height: 26px;
+    padding: 0;
+    border-radius: 40px;
+    border: none;
+    background-color: #ddd;
+  }
+
+  .clear-selection:hover {
+    cursor: pointer;
+    background-color: #ccc;
+  }
+
   header {
-    height: 150px;
+    height: 160px;
     width: 100%;
     display: grid;
     grid-auto-columns: 940px;
@@ -120,19 +136,19 @@
     font-family: "Libre Baskerville", serif;
   }
 
-  h1 {
-    margin-bottom: 30px;
+  .country {
     margin-left: 200px;
   }
 
-  header h1 {
+  .country h1 {
     position: relative;
+    margin-bottom: 0;
   }
 
-  h1 .byline {
+  .country .byline {
     font-size: 16px;
     font-family: "Source Sans Pro", sans-serif;
-    font-weight: normal;
+    margin-top: 0;
   }
 
   main {
@@ -181,8 +197,8 @@
   .container-headers {
     display: grid;
     width: 540px;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    margin-left: 200px;
+    grid-template-columns: 200px 1fr 1fr 1fr 1fr;
+    /* margin-left: 200px; */
   }
 
   .matching-party {
@@ -271,6 +287,7 @@
     width: 100%;
     text-align: center;
     font-style: italic;
+    margin-top: 3px;
   }
 </style>
 
@@ -295,7 +312,7 @@
               {overlap === 1 ? 'statement' : 'statements'}
               {`(${Math.round((overlap / $activeQuestions.length) * 100)}%)`}
               <span class="info">
-                The number of statements for which the selected parties have the
+                The number of statements for which the matching parties have the
                 <em>same</em>
                 opinion
               </span>
@@ -311,9 +328,9 @@
               {difference === 1 ? 'statement' : 'statements'}
               {`(${Math.round((difference / $activeQuestions.length) * 100)}%)`}
               <span class="info">
-                The number of statements for which the selected parties have a
+                The number of statements for which the matching parties have
                 <em>different</em>
-                opinion
+                opinions
               </span>
             </div>
           </div>
@@ -322,7 +339,10 @@
           class="matching-parties"
           style="background-color: {$selectedPartyIds.length === 1 ? 'rgb(179, 219, 186)' : '#eee'};">
           {#if $selectedPartyIds.length > 1}
-            <span class="label">parties:</span>
+            <span class="label">
+              {$selectedPartyIds.length}
+              matching parties:
+            </span>
           {/if}
           <div
             bind:this={partyList}
@@ -363,16 +383,25 @@
       {/each}
     </div>
 
-    <h1>
-      <span class="flag">🇪🇺</span>
-      {$selectedCountry.name}
-      <span class="byline">
-        {$selectedCountry.seats}
-        seats in EU parliament
-      </span>
-    </h1>
+    <div class="country">
+      <h1>
+        <span class="flag">🇪🇺</span>
+        {$selectedCountry.name}
+      </h1>
+      <p class="byline">
+        <em>{$selectedCountry.seats} seats</em>
+        in EU parliament
+      </p>
+    </div>
 
     <div class="container-headers">
+      <button
+        on:click={() => ($selectedPartyIds = [])}
+        style="visibility: {$selectedPartyIds.length > 0 ? 'visible' : 'hidden'};"
+        class="clear-selection">
+        <i class="fas fa-times-circle" />
+        clear selection
+      </button>
       <div class="opinion-label" style="color: hsl(200, 50%, 50%);">Agree</div>
       <div class="opinion-label" style="color: #999;">Neutral</div>
       <div class="opinion-label" style="color: hsl(0, 50%, 50%);">

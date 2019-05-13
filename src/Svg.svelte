@@ -93,6 +93,15 @@
     hoverParty = undefined;
     hover = undefined;
   }
+
+  $: popupLeft = () =>
+    mousePos[0] < innerWidth / 2
+      ? mousePos[0] + 20
+      : mousePos[0] - 20 - 40 - 400;
+
+  $: popupTop = () =>
+    mousePos[1] -
+    Math.max(0, mousePos[1] + popupHeight + 160 + 20 - innerHeight);
 </script>
 
 <style>
@@ -207,7 +216,7 @@
   {#if mousePos}
     <div
       class="popup"
-      style="display: {hoverParty ? 'block' : 'none'}; left: {mousePos[0] < innerWidth / 2 ? mousePos[0] + 20 : mousePos[0] - 20 - 40 - 400}px; top: {mousePos[1]};"
+      style="display: {hoverParty ? 'block' : 'none'}; left: {popupLeft()}px; top: {popupTop()};"
       bind:clientHeight={popupHeight}>
       {#if hoverParty}
         <h2>{hoverParty.party.name_short}</h2>
