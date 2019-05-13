@@ -84,7 +84,6 @@
   );
 
   function showPopup(info, e) {
-    mousePos = [e.x, e.y];
     hoverParty = info;
     hover = { question: info.question, answer: info.answer };
   }
@@ -95,13 +94,14 @@
   }
 
   $: popupLeft = () =>
-    mousePos[0] < innerWidth / 2
+    !mousePos
+      ? 0
+      : mousePos[0] < innerWidth / 2
       ? mousePos[0] + 20
       : mousePos[0] - 20 - 40 - 400;
 
-  $: popupTop = () =>
-    mousePos[1] -
-    Math.max(0, mousePos[1] + popupHeight + 160 + 20 - innerHeight);
+  $: popupMarginTop = () =>
+    Math.min(0, innerHeight - (mousePos ? mousePos[2] + popupHeight + 20 : 0));
 </script>
 
 <style>
@@ -205,7 +205,7 @@
               style="fill: {$selectedPartyIds.includes(party.id) ? opinion.answer.color : opinion.answer.colorLight};"
               class="party-answer"
               on:click={() => updateSelectedPartyIds(opinion)}
-              on:mousemove={e => (mousePos = [e.clientX, e.offsetY])}
+              on:mousemove={e => (mousePos = [e.clientX, e.offsetY, e.clientY])}
               on:mouseover={e => showPopup({ party, ...opinion }, e)}
               on:mouseout={() => hidePopup()} />
           {/each}
@@ -216,7 +216,7 @@
   {#if mousePos}
     <div
       class="popup"
-      style="display: {hoverParty ? 'block' : 'none'}; left: {popupLeft()}px; top: {popupTop()};"
+      style="display: {hoverParty ? 'block' : 'none'}; left: {popupLeft()}px; top: {mousePos[1]}; margin-top: {popupMarginTop()}px;"
       bind:clientHeight={popupHeight}>
       {#if hoverParty}
         <h2>{hoverParty.party.name_short}</h2>
