@@ -119,13 +119,31 @@
     top: 0;
   }
 
-  /* footer {
-    position: absolute;
+  footer {
+    position: fixed;
     bottom: 0;
     left: 0;
-    background-color: white;
+    background-color: #fff;
     width: 100%;
-  } */
+    display: grid;
+    grid-template-columns: auto;
+    justify-content: center;
+    align-items: center;
+  }
+
+  footer .inner {
+    width: 940px;
+    display: grid;
+    grid-template-columns: auto 200px;
+    justify-content: right;
+    align-items: center;
+    height: 30px;
+    text-align: right;
+  }
+
+  footer .inner p {
+    margin: 0;
+  }
 
   .opinion-label {
     display: inline-block;
@@ -156,11 +174,11 @@
     grid-template-columns: 200px 540px 200px;
     justify-content: center;
     margin-top: 160px;
+    padding-bottom: 100px;
   }
 
   aside {
     margin-left: 10px;
-    /* background-color: #eee; */
   }
 
   aside .inner {
@@ -198,24 +216,12 @@
     display: grid;
     width: 540px;
     grid-template-columns: 200px 1fr 1fr 1fr 1fr;
-    /* margin-left: 200px; */
   }
 
   .matching-party {
     margin-left: 0px;
     padding: 0 0 10px 0;
   }
-
-  .multi {
-    padding: 0;
-  }
-
-  /* .multi:before {
-    content: "\25B8";
-    position: absolute;
-    left: 0px;
-    margin-top: 0px;
-  } */
 
   .matching-party h3 {
     margin: 0;
@@ -225,12 +231,6 @@
     margin-top: 0;
   }
 
-  /* .position-remark {
-    font-size: 10px;
-    font-style: italic;
-    margin-top: 3px;
-  } */
-
   .overlap-diff {
     padding: 10px;
     background-color: #eee;
@@ -239,7 +239,7 @@
 
   .overlap-diff .value {
     font-family: "Libre Baskerville", serif;
-    font-size: 18px;
+    font-size: 20px;
   }
 
   .overlap-diff .label,
@@ -263,19 +263,9 @@
 
   .info {
     display: inline-block;
-    font-size: 10px;
+    font-size: 11px;
+    margin-top: 3px;
   }
-
-  /* .political-preference,
-  .political-ideology {
-    background-color: #eee;
-    padding: 10px;
-  }
-
-  .political-preference span,
-  .political-ideology span {
-    font-size: 12px;
-  } */
 
   .party-list {
     overflow-y: auto;
@@ -307,7 +297,7 @@
         {#if $selectedPartyIds.length > 1}
           <div class="overlap-diff overlap">
             <div>
-              <span class="label">same opinion:</span>
+              <span class="label">same opinion</span>
               <span class="value">{overlap}</span>
               {overlap === 1 ? 'statement' : 'statements'}
               {`(${Math.round((overlap / $activeQuestions.length) * 100)}%)`}
@@ -322,14 +312,14 @@
             <div>
               <span class="label">
                 <span>mixed</span>
-                opinions:
+                opinions
               </span>
               <span class="value">{difference}</span>
-              {difference === 1 ? 'statement' : 'statements'}
+              {overlap === 1 ? 'statement' : 'statements'}
               {`(${Math.round((difference / $activeQuestions.length) * 100)}%)`}
               <span class="info">
                 The number of statements for which the matching parties have
-                <em>different</em>
+                <em>mixed</em>
                 opinions
               </span>
             </div>
@@ -341,13 +331,19 @@
           {#if $selectedPartyIds.length > 1}
             <span class="label">
               {$selectedPartyIds.length}
-              matching parties:
+              matching parties
+            </span>
+            <span class="info">
+              The parties that match your selection and have the same opinion for
+              {overlap}
+              {difference === 1 ? 'statement' : 'statements'}
+              .
             </span>
           {/if}
           <div
             bind:this={partyList}
             class="party-list"
-            style="max-height: {innerHeight - 460}px">
+            style="max-height: {innerHeight - 560}px">
             {#each filteredParties as party}
               <div
                 class="matching-party"
@@ -414,6 +410,9 @@
   </div>
 </header>
 
-<!-- <footer>
-  <p>concept & design by TULP interactive ©2019</p>
-</footer> -->
+<footer>
+  <div class="inner">
+    <p>concept & design by TULP interactive ©2019</p>
+    <a href="about.html" target="_blank" alt="about 2019 vote EU">about</a>
+  </div>
+</footer>
