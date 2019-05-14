@@ -18,9 +18,15 @@
 <style>
   p {
     height: 120px;
-    margin: 0 10px 0 0;
+    margin: 0 10px 0 10px;
     text-align: right;
     font-weight: normal;
+  }
+
+  @media (min-width: 940px) {
+    p {
+      margin: 0 10px 0 0;
+    }
   }
 </style>
 

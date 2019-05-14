@@ -1,9 +1,14 @@
 <script>
-  import { fade } from 'svelte/transition'
+  import { fade } from "svelte/transition";
   import { afterUpdate } from "svelte";
-  import { activeQuestions, allParties, selectedPartyIds, opinions } from "./store.js";
-  import Svg from './Svg.svelte'
-  import Question from './Question.svelte'
+  import {
+    activeQuestions,
+    allParties,
+    selectedPartyIds,
+    opinions
+  } from "./store.js";
+  import Svg from "./Svg.svelte";
+  import Question from "./Question.svelte";
 
   let innerWidth = 0;
   let innerHeight = 0;
@@ -33,7 +38,7 @@
 <style>
   main {
     display: grid;
-    grid-template-columns: 200px 540px 200px;
+    grid-template-columns: 200px 1fr;
     justify-content: center;
     margin-top: 160px;
     padding-bottom: 100px;
@@ -41,6 +46,7 @@
 
   aside {
     margin-left: 10px;
+    display: none;
   }
 
   aside .inner {
@@ -120,6 +126,16 @@
     text-align: center;
     font-style: italic;
     margin-top: 3px;
+  }
+
+  @media (min-width: 940px) {
+    main {
+      grid-template-columns: 200px 540px 200px;
+    }
+
+    aside {
+      display: block;
+    }
   }
 </style>
 

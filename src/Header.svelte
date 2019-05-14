@@ -4,8 +4,19 @@
 </script>
 
 <style>
-  .button-container {
+  header {
+    height: 160px;
+    width: 100%;
     display: grid;
+    grid-auto-columns: 1fr;
+    justify-content: center;
+    background-color: white;
+    position: fixed;
+    top: 0;
+  }
+
+  .button-container {
+    display: none;
     grid-template-columns: repeat(auto-fit, minmax(1px, 1fr));
   }
 
@@ -23,17 +34,6 @@
   .clear-selection:hover {
     cursor: pointer;
     background-color: #ccc;
-  }
-
-  header {
-    height: 160px;
-    width: 100%;
-    display: grid;
-    grid-auto-columns: 940px;
-    justify-content: center;
-    background-color: white;
-    position: fixed;
-    top: 0;
   }
 
   .opinion-label {
@@ -58,7 +58,6 @@
 
   .container-headers {
     display: grid;
-    width: 540px;
     grid-template-columns: 200px 1fr 1fr 1fr 1fr;
   }
 
@@ -67,6 +66,20 @@
     grid-template-columns: 200px 1fr;
     justify-items: start;
     align-items: center;
+  }
+
+  @media (min-width: 940px) {
+    header {
+      grid-auto-columns: 940px;
+    }
+
+    .container-headers {
+      grid-template-columns: 200px 1fr 1fr 1fr 1fr 200px;
+    }
+
+    .button-container {
+      display: grid;
+    }
   }
 </style>
 
