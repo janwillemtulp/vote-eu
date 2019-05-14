@@ -108,17 +108,19 @@
     }
   }
 
-  @media (min-width: 940px) {
-    header {
-      grid-auto-columns: 940px;
-    }
-
+  @media (min-width: 768px) {
     .container-headers {
       grid-template-columns: 200px 1fr 1fr 1fr 1fr 200px;
     }
 
     .button-container {
       display: grid;
+    }
+  }
+
+  @media (min-width: 940px) {
+    header {
+      grid-auto-columns: 940px;
     }
 
     .opinion-label {

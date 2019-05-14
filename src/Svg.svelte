@@ -32,12 +32,12 @@
     .range([0, 21 * rowHeight * 2]);
 
   $: xOffset = block => {
-    if (block.answer.simplifiedValue === 100) {
-      return answerWidth - barWidth - block.parties.length * barWidth;
-    } else if (block.answer.simplifiedValue === 50) {
-      return answerWidth / 2 - (block.parties.length * barWidth) / 2;
-    }
-    return barWidth;
+    // if (block.answer.simplifiedValue === 100) {
+    // return answerWidth - barWidth - block.parties.length * barWidth;
+    // } else if (block.answer.simplifiedValue === 50) {
+    return answerWidth / 2 - (block.parties.length * barWidth) / 2;
+    // }
+    // return barWidth;
   };
 
   function filterOpinionsByParty(party) {

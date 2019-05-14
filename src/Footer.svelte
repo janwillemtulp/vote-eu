@@ -15,7 +15,7 @@
   footer .inner {
     width: 100%;
     display: grid;
-    grid-template-columns: auto 200px;
+    grid-template-columns: 1fr 1fr;
     justify-content: right;
     align-items: center;
     height: 30px;
@@ -23,7 +23,12 @@
   }
 
   footer .inner p {
-    margin: 0;
+    margin: 0 10px 0 0;
+  }
+
+  footer .inner a {
+    justify-self: start;
+    margin-left: 10px;
   }
 
   .smaller {
@@ -46,7 +51,8 @@
 <footer>
   <div class="inner">
     <p>
-      <span class="smaller">concept & design</span> by
+      <span class="smaller">concept & design</span>
+      by
       <a
         href="http://tulpinteractive.com"
         title="TULP interactive"
