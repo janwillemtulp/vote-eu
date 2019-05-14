@@ -92,8 +92,6 @@
       </div>
     </div>
 
-
-
     <div class="container-headers">
       <button
         on:click={() => ($selectedPartyIds = [])}
