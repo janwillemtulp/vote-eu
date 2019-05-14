@@ -50,7 +50,7 @@
   }
 
   aside .inner {
-    width: 190px;
+    width: 180px;
     position: fixed;
   }
 
@@ -128,13 +128,23 @@
     margin-top: 3px;
   }
 
+  @media (min-width: 768px) {
+    main {
+      grid-template-columns: 200px 1fr 200px;
+    }
+
+    aside {
+      display: block;
+    }
+  }
+
   @media (min-width: 940px) {
     main {
       grid-template-columns: 200px 540px 200px;
     }
 
-    aside {
-      display: block;
+    .inner {
+      width: 190px;
     }
   }
 </style>

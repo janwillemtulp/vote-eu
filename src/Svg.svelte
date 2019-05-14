@@ -1,4 +1,5 @@
 <script>
+  import { afterUpdate } from 'svelte'
   import { opinions, allParties, selectedPartyIds } from "./store.js";
   import { scaleOrdinal, scaleLinear } from "d3-scale";
   import { extent } from "d3-array";
@@ -6,9 +7,6 @@
   import { mouse, select } from "d3-selection";
   import { color } from "d3-color";
 
-  $: console.log("$opinions", $opinions);
-  $: console.log("$allParties", $allParties);
-  $: console.log("$selectedPartyIds", $selectedPartyIds);
 
   let rowHeight = 60;
   let barWidth = 540 / 4 / 15;
@@ -19,8 +17,10 @@
   let popupHeight;
   let innerWidth;
   export let containerHeight;
+  $: containerWidth = innerWidth ? innerWidth < 768 ? innerWidth - 210 : innerWidth - 400 : 540;
+  $: console.log(containerWidth, innerWidth)
 
-  let xc = scaleOrdinal()
+  $: xc = scaleOrdinal()
     .domain([100, 50, 0, null])
     .range(Array.from(Array(4).keys()).map(d => d * answerWidth));
 
@@ -28,7 +28,7 @@
     .domain(extent($opinions.map(d => d.question.id)))
     .range([0, 21 * rowHeight * 2]);
 
-  function xOffset(block) {
+  $: xOffset = block => {
     if (block.answer.simplifiedValue === 100) {
       return answerWidth - barWidth - block.parties.length * barWidth;
     } else if (block.answer.simplifiedValue === 50) {
@@ -41,7 +41,7 @@
     return $opinions.filter(d => d.parties.map(d => d.id).includes(party.id));
   }
 
-  function getPath(partyId, opinions) {
+  $: getPath = (partyId, opinions) => {
     return line()
       .x(
         (d, i) =>
@@ -102,6 +102,25 @@
 
   $: popupMarginTop = () =>
     Math.min(0, innerHeight - (mousePos ? mousePos[2] + popupHeight + 20 : 0));
+
+  function resize() {
+    if (innerWidth < 768) {
+      barWidth = (innerWidth - 210) / 4 / 15;
+      answerWidth = (innerWidth - 210) / 4;
+    } else if (innerWidth < 940) {
+      barWidth = (containerWidth) / 4 / 15;
+      answerWidth = (containerWidth) / 4;
+    } else {
+      barWidth = 540 / 4 / 15;
+      answerWidth = 540 / 4;
+    }
+  }
+
+  afterUpdate(() => {
+    console.log('after update')
+    resize()
+  })
+
 </script>
 
 <style>
@@ -114,10 +133,6 @@
   .answer:hover {
     fill: #ddd;
     cursor: pointer;
-  }
-
-  .party-answer {
-    stroke: black;
   }
 
   .party-answer:hover {
@@ -133,6 +148,7 @@
     box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.2);
     padding: 20px;
     z-index: 1000;
+    display: none;
   }
 
   .popup h2 {
@@ -149,12 +165,18 @@
   path {
     pointer-events: none;
   }
+
+  /* @media (min-width: 940px) {
+    .popup {
+      display: block;
+    }
+  } */
 </style>
 
 <svelte:window bind:innerWidth />
 
 <div>
-  <svg width="540" height={22 * 2 * rowHeight + 22}>
+  <svg width={containerWidth} height={22 * 2 * rowHeight + 22}>
     <g>
       {#each $opinions as opinion}
         <rect
@@ -202,7 +224,7 @@
               y={rowHeight / 4}
               width={barWidth}
               height={rowHeight / 2}
-              style="fill: {$selectedPartyIds.includes(party.id) ? opinion.answer.color : opinion.answer.colorLight};"
+              style="fill: {$selectedPartyIds.includes(party.id) ? opinion.answer.color : opinion.answer.colorLight}; stroke: {containerWidth < 375 ? ($selectedPartyIds.includes(party.id) ? opinion.answer.color : opinion.answer.colorLight) : 'black'}"
               class="party-answer"
               on:click={() => updateSelectedPartyIds(opinion)}
               on:mousemove={e => (mousePos = [e.clientX, e.offsetY, e.clientY])}
