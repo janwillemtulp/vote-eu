@@ -26,6 +26,16 @@
     margin: 0;
   }
 
+  .smaller {
+    display: none;
+  }
+
+  @media (min-width: 414px) {
+    .smaller {
+      display: inline;
+    }
+  }
+
   @media (min-width: 940px) {
     .inner {
       width: 940px;
@@ -36,7 +46,7 @@
 <footer>
   <div class="inner">
     <p>
-      concept & design by
+      <span class="smaller">concept & design</span> by
       <a
         href="http://tulpinteractive.com"
         title="TULP interactive"
