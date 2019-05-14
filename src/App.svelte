@@ -19,7 +19,8 @@
   // import CountrySelect from "./CountrySelect.svelte";
   import Question from "./Question.svelte";
   import PoliticalPosition from "./PoliticalPosition.svelte";
-  import Modal from './Modal.svelte';
+  import Modal from "./Modal.svelte";
+  import Header from "./Header.svelte";
 
   let innerWidth = 0;
   let innerHeight = 0;
@@ -89,38 +90,6 @@
 </script>
 
 <style>
-  .button-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(1px, 1fr));
-  }
-
-  .clear-selection {
-    width: 115px;
-    justify-self: end;
-    margin-right: 10px;
-    height: 26px;
-    padding: 0;
-    border-radius: 40px;
-    border: none;
-    background-color: #ddd;
-  }
-
-  .clear-selection:hover {
-    cursor: pointer;
-    background-color: #ccc;
-  }
-
-  header {
-    height: 160px;
-    width: 100%;
-    display: grid;
-    grid-auto-columns: 940px;
-    justify-content: center;
-    background-color: white;
-    position: fixed;
-    top: 0;
-  }
-
   footer {
     position: fixed;
     bottom: 0;
@@ -145,30 +114,6 @@
 
   footer .inner p {
     margin: 0;
-  }
-
-  .opinion-label {
-    display: inline-block;
-    width: calc(540px / 4);
-    text-align: center;
-    font-weight: bold;
-    font-size: 18px;
-    font-family: "Libre Baskerville", serif;
-  }
-
-  .country {
-    margin-left: 200px;
-  }
-
-  .country h1 {
-    position: relative;
-    margin-bottom: 0;
-  }
-
-  .country .byline {
-    font-size: 16px;
-    font-family: "Source Sans Pro", sans-serif;
-    margin-top: 0;
   }
 
   main {
@@ -214,12 +159,6 @@
     margin: 0;
   }
 
-  .container-headers {
-    display: grid;
-    width: 540px;
-    grid-template-columns: 200px 1fr 1fr 1fr 1fr;
-  }
-
   .matching-party {
     margin-left: 0px;
     padding: 0 0 10px 0;
@@ -255,14 +194,6 @@
     background-color: hsla(46, 92%, 75%, 1);
   }
 
-  .flag {
-    font-size: 60px;
-    margin-top: 14px;
-    position: absolute;
-    left: -80px;
-    top: -32px;
-  }
-
   .party-list {
     overflow-y: auto;
     overflow-x: hidden;
@@ -275,7 +206,6 @@
     font-style: italic;
     margin-top: 3px;
   }
- 
 </style>
 
 <svelte:window bind:innerWidth bind:innerHeight />
@@ -296,7 +226,9 @@
             <div>
               <span class="label">same opinion in:</span>
               <span class="value">{overlap}</span>
-              {overlap === 1 ? 'statement' : 'statements'} of {$activeQuestions.length}
+              {overlap === 1 ? 'statement' : 'statements'}
+              of
+              {$activeQuestions.length}
               {`(${Math.round((overlap / $activeQuestions.length) * 100)}%)`}
             </div>
           </div>
@@ -307,7 +239,9 @@
                 opinions in:
               </span>
               <span class="value">{difference}</span>
-              {overlap === 1 ? 'statement' : 'statements'} of {$activeQuestions.length}
+              {overlap === 1 ? 'statement' : 'statements'}
+              of
+              {$activeQuestions.length}
               {`(${Math.round((difference / $activeQuestions.length) * 100)}%)`}
             </div>
           </div>
@@ -317,7 +251,8 @@
           style="background-color: {$selectedPartyIds.length === 1 ? 'rgb(179, 219, 186)' : '#eee'};">
           {#if $selectedPartyIds.length > 1}
             <span class="label">
-              {$selectedPartyIds.length} parties match your selection:
+              {$selectedPartyIds.length}
+              parties match your selection:
             </span>
           {/if}
           <div
@@ -344,54 +279,15 @@
   </aside>
 </main>
 
-<header>
-  <div>
-    {#await promise}
+{#await promise}
       <p>...loading data</p>
     {:then}
     {:catch error}
       <p style="color: red;">{error.message}</p>
     {/await}
+<Header />
 
-    <div class="button-container">
-      {#each $allCountries as country}
-        <CountryButton {country} />
-      {/each}
-      <!-- <CountrySelect /> -->
-    </div>
-
-    <div class="country">
-      <h1>
-        <span class="flag">🇪🇺</span>
-        {$selectedCountry.name}
-      </h1>
-      <p class="byline">
-        <em>{$selectedCountry.seats} seats</em>
-        in EU parliament
-      </p>
-    </div>
-
-    <div class="container-headers">
-      <button
-        on:click={() => ($selectedPartyIds = [])}
-        style="visibility: {$selectedPartyIds.length > 0 ? 'visible' : 'hidden'};"
-        class="clear-selection">
-        <i class="fas fa-times-circle" />
-        clear selection
-      </button>
-      <div class="opinion-label" style="color: hsl(200, 50%, 50%);">Agree</div>
-      <div class="opinion-label" style="color: #999;">Neutral</div>
-      <div class="opinion-label" style="color: hsl(0, 50%, 50%);">
-        Disagree
-      </div>
-      <div class="opinion-label" style="color: hsl(310, 50%, 70%);">
-        No opinion
-      </div>
-    </div>
-  </div>
-</header>
-
-<Modal />
+<!-- <Modal /> -->
 
 <footer>
   <div class="inner">
