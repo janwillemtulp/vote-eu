@@ -29,6 +29,7 @@
     border-radius: 40px;
     border: none;
     background-color: #ddd;
+    margin: 0 10px 0 0;
   }
 
   .clear-selection:hover {

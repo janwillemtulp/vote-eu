@@ -9,6 +9,7 @@
     grid-template-columns: auto;
     justify-content: center;
     align-items: center;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
   }
 
   footer .inner {
