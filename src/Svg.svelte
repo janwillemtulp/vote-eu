@@ -1,12 +1,11 @@
 <script>
-  import { afterUpdate } from 'svelte'
+  import { afterUpdate } from "svelte";
   import { opinions, allParties, selectedPartyIds } from "./store.js";
   import { scaleOrdinal, scaleLinear } from "d3-scale";
   import { extent } from "d3-array";
   import { line, curveMonotoneY } from "d3-shape";
   import { mouse, select } from "d3-selection";
   import { color } from "d3-color";
-
 
   let rowHeight = 60;
   let barWidth = 540 / 4 / 15;
@@ -17,8 +16,12 @@
   let popupHeight;
   let innerWidth;
   export let containerHeight;
-  $: containerWidth = innerWidth ? innerWidth < 768 ? innerWidth - 210 : innerWidth - 400 : 540;
-  $: console.log(containerWidth, innerWidth)
+  $: containerWidth = innerWidth
+    ? innerWidth < 768
+      ? innerWidth - 210
+      : innerWidth - 400
+    : 540;
+  $: console.log(containerWidth, innerWidth);
 
   $: xc = scaleOrdinal()
     .domain([100, 50, 0, null])
@@ -35,7 +38,7 @@
       return answerWidth / 2 - (block.parties.length * barWidth) / 2;
     }
     return barWidth;
-  }
+  };
 
   function filterOpinionsByParty(party) {
     return $opinions.filter(d => d.parties.map(d => d.id).includes(party.id));
@@ -56,7 +59,7 @@
           (i % 3 === 0 ? -rowHeight / 4 : i % 3 === 2 ? rowHeight / 4 : 0)
       )
       .curve(curveMonotoneY)(opinions);
-  }
+  };
 
   function updateSelectedPartyIds(opinion) {
     const partyIds = opinion.parties.map(d => d.id);
@@ -108,8 +111,8 @@
       barWidth = (innerWidth - 210) / 4 / 15;
       answerWidth = (innerWidth - 210) / 4;
     } else if (innerWidth < 940) {
-      barWidth = (containerWidth) / 4 / 15;
-      answerWidth = (containerWidth) / 4;
+      barWidth = containerWidth / 4 / 15;
+      answerWidth = containerWidth / 4;
     } else {
       barWidth = 540 / 4 / 15;
       answerWidth = 540 / 4;
@@ -117,10 +120,9 @@
   }
 
   afterUpdate(() => {
-    console.log('after update')
-    resize()
-  })
-
+    console.log("after update");
+    resize();
+  });
 </script>
 
 <style>

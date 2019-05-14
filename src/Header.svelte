@@ -38,10 +38,9 @@
 
   .opinion-label {
     display: inline-block;
-    width: calc(540px / 4);
     text-align: center;
     font-weight: bold;
-    font-size: 18px;
+    font-size: 12px;
     font-family: "Libre Baskerville", serif;
   }
 
@@ -51,7 +50,7 @@
   }
 
   .country .byline {
-    font-size: 16px;
+    font-size: 14px;
     font-family: "Source Sans Pro", sans-serif;
     margin-top: 0;
   }
@@ -59,6 +58,8 @@
   .container-headers {
     display: grid;
     grid-template-columns: 200px 1fr 1fr 1fr 1fr;
+    align-items: end;
+    margin-right: 10px;
   }
 
   .country-container {
@@ -66,6 +67,44 @@
     grid-template-columns: 200px 1fr;
     justify-items: start;
     align-items: center;
+  }
+
+  .container-headers:nth-child(even) {
+    background-color: orange;
+  }
+
+  .logo {
+    max-width: 100px;
+    margin: 10px;
+    justify-self: center;
+  }
+
+  .bigger {
+    display: none;
+  }
+
+  .smaller {
+    display: block;
+  }
+
+  @media (min-width: 414px) {
+    .smaller {
+      display: none;
+    }
+
+    .bigger {
+      display: block;
+    }
+
+    .country .byline {
+      font-size: 16px;
+    }
+  }
+
+  @media (min-width: 540px) {
+    .opinion-label {
+      font-size: 14px;
+    }
   }
 
   @media (min-width: 940px) {
@@ -80,6 +119,10 @@
     .button-container {
       display: grid;
     }
+
+    .opinion-label {
+      font-size: 18px;
+    }
   }
 </style>
 
@@ -93,11 +136,9 @@
     </div>
 
     <div class="country-container">
-      <img src="img/logo.png" alt="2019 vote EU" width="150" />
+      <img class="logo" src="img/logo.png" alt="2019 vote EU" />
       <div class="country">
-        <h1>
-          {$selectedCountry.name}
-        </h1>
+        <h1> {$selectedCountry.name}</h1>
         <p class="byline">
           <em>{$selectedCountry.seats} seats</em>
           in EU parliament
@@ -113,13 +154,25 @@
         <i class="fas fa-times-circle" />
         clear selection
       </button>
-      <div class="opinion-label" style="color: hsl(200, 50%, 50%);">Agree</div>
-      <div class="opinion-label" style="color: #999;">Neutral</div>
-      <div class="opinion-label" style="color: hsl(0, 50%, 50%);">
+      <div class="opinion-label bigger" style="color: hsl(200, 50%, 50%);">
+        Agree
+      </div>
+      <div class="opinion-label bigger" style="color: #999;">Neutral</div>
+      <div class="opinion-label bigger" style="color: hsl(0, 50%, 50%);">
         Disagree
       </div>
-      <div class="opinion-label" style="color: hsl(310, 50%, 70%);">
-        No opinion
+      <div class="opinion-label bigger" style="color: hsl(310, 50%, 70%);">
+        No Opinion
+      </div>
+      <div class="opinion-label smaller" style="color: hsl(200, 50%, 50%);">
+        Agree
+      </div>
+      <div class="opinion-label smaller" style="color: #999;">Neut.</div>
+      <div class="opinion-label smaller" style="color: hsl(0, 50%, 50%);">
+        Dis-agr.
+      </div>
+      <div class="opinion-label smaller" style="color: hsl(310, 50%, 70%);">
+        No Opin.
       </div>
     </div>
   </div>
