@@ -97,6 +97,7 @@
     padding: 10px;
     background-color: #eee;
     margin-bottom: 2px;
+    display: none;
   }
 
   .overlap-diff .value {
@@ -126,6 +127,12 @@
     text-align: center;
     font-style: italic;
     margin-top: 3px;
+  }
+
+  @media (min-height: 414px) {
+    .overlap-diff {
+      display: block;
+    }
   }
 
   @media (min-width: 768px) {

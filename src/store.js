@@ -73,6 +73,7 @@ answerColorsLight.set(50, 'hsl(0, 0%, 80%)')
 answerColorsLight.set(0, 'hsl(3, 35%, 75%)')
 answerColorsLight.set(null, 'hsl(307, 30%, 83%)')
 
+
 const answerLabels = new Map()
 answerLabels.set(100, 'Agree')
 answerLabels.set(50, 'Neutral')

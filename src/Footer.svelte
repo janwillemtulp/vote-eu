@@ -12,7 +12,7 @@
   }
 
   footer .inner {
-    width: 940px;
+    width: 100%;
     display: grid;
     grid-template-columns: auto 200px;
     justify-content: right;
@@ -23,6 +23,12 @@
 
   footer .inner p {
     margin: 0;
+  }
+
+  @media (min-width: 940px) {
+    .inner {
+      width: 940px;
+    }
   }
 </style>
 

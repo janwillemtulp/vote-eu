@@ -224,7 +224,7 @@
               y={rowHeight / 4}
               width={barWidth}
               height={rowHeight / 2}
-              style="fill: {$selectedPartyIds.includes(party.id) ? opinion.answer.color : opinion.answer.colorLight}; stroke: {containerWidth < 375 ? ($selectedPartyIds.includes(party.id) ? opinion.answer.color : opinion.answer.colorLight) : 'black'}"
+              style="fill: {$selectedPartyIds.includes(party.id) ? opinion.answer.color : opinion.answer.colorLight}; stroke: {containerWidth < 368 ? ($selectedPartyIds.includes(party.id) ? opinion.answer.color : opinion.answer.color) : 'black'}"
               class="party-answer"
               on:click={() => updateSelectedPartyIds(opinion)}
               on:mousemove={e => (mousePos = [e.clientX, e.offsetY, e.clientY])}
