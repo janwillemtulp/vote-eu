@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>2019 vote EU</title>
+
+    <!--  Essential META Tags -->
+
+    <meta property="og:title" content="2019 vote EU" />
+    <meta
+      property="og:description"
+      content="Vote matching for the 2019 European elections, but then the other way around."
+    />
+    <meta
+      property="og:image"
+      content="http://euro-travel-example.com/thumbnail.jpg"
+    />
+    <meta property="og:url" content="https://2019vote.eu" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!--  Non-Essential, But Recommended -->
+
+    <meta property="og:site_name" content="2019 vote EU" />
+    <meta
+      name="twitter:image:alt"
+      content="Vote matching for the 2019 European elections, but then the other way around."
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
+      integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay"
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Libre+Baskerville:400,700|Source+Sans+Pro:400,700"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="global.css" />
+    <link rel="stylesheet" href="bundle.css" />
+    <style>
+      .container {
+        display: grid;
+        grid-template-columns: 1fr;
+        justify-items: center;
+      }
+
+      .content {
+        max-width: 940px;
+        padding: 50px;
+        font-size: 16px;
+        line-height: 26px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="content">
+        <img src="img/logo.png" style="height: 100px;" />
+        <h2>Vote matching, but the other way around</h2>
+        <p>
+          2019 vote EU is an online tool that allows you to explore the opinions
+          of over 250 political parties from 28 EU member states on 22 policy
+          statements for the 2019 European Elections.
+        </p>
+        <h3>How it works</h3>
+        <p>
+          First select the country you wish to explore. Then for any of the
+          statements, click on Agree, Neutral, Disagree or No Opinion. This will
+          filter all the political parties to only those who also provided that
+          opinion for that statement. It also marks all the statements that
+          these filtered parties all agree on, or have some mixed opinions on.
+          Continue clicking narrowing down the list. You'll be surprised how
+          quickly you find unique combinations. Enjoy!
+        </p>
+        <h3>What is different from other vote matching sites?</h3>
+        <p>
+          Many vote matching sites ask you to provide your opinion on a set of
+          policy statements, and after optionally setting weights for the
+          opinions that are most important to you, you get an overview of which
+          party matches best with your opinions. And although this works fine,
+          the approach from 2019 vote EU is different:
+          <em>
+            ultimately, if you vote for a political party, you vote for all of
+            the opions of that political party. So, it doesn't really matter if
+            your opinion matches 50% or 75%, you vote for the complete package
+            of opinions of that party
+          </em>
+          . This means that it is valuable to get a sense of overview: how does
+          this party differ from the others? Does it have unique positions? If I
+          agree with this position, what do I automatically agree with if I vote
+          for them? etc.
+        </p>
+        <p>This can yield some interesting insights, for instance:</p>
+        <ul>
+          <li>
+            In Sweden, all of the parties are against the legalization of the
+            personal use of soft drugs. So, even before the elections, we
+            already know that 1) if you're from Sweden and have a different
+            opinion, you're out of luck, and 2) all of the 20 MEP's in EU
+            Parliament representing Sweden that will be elected will have this
+            opinion, guaranteed.
+          </li>
+          <li>
+            In The Netherlands, Green Left and Democrats '66 agree on 21 of 22
+            statements. At least based on these statements, there is hardly a
+            difference between these two.
+          </li>
+          <li>
+            In Malta there are just 3 political parties. For some statements
+            each of them has a distinct opinion. If you have a strong opinion
+            about one of these, then this single statement may determine which
+            party matches the given opinion best.
+          </li>
+        </ul>
+        <h3>Data</h3>
+        <p>
+          The source of the data is the
+          <a href="https://euandi2019.eu" title="EU and I" target="_blank">
+            EU and I </a
+          >. The 2019 has not been released publicly as open source data yet,
+          but in consent with the authors of EU and
+          I the data could already be used. Read more about how
+          <a
+            href="https://euandi2019.eu/AT/default/EN/pages/about"
+            target="_blank"
+            >EU and I has collected the data</a
+          >
+          and about their
+          <a
+            href="https://euandi2019.eu/AT/default/EN/pages/methodology"
+            target="_blank"
+            >methodology</a
+          >. The data for 2019 vote EU was collected from the EU and I website on May 2nd, 2019. The data has not been modified except for:
+          <ul>
+            <li>The original data distinguishes between "strongly agree" and "tend to agree", as well as "strongly disagree" and "tend to disagree". 
+              2019 vote EU groups these into "agree" and "disagree" respectively. </li>
+            <li>EU and I allows you to select between Walloon and Flemish. The 2019 vote EU merges these into a single Belgium country.</li>
+          </ul>
+        </p>
+        <h3>Disclaimer</h3>
+        <p>This website is in no way associated with EU and I.</p>
+        <h3>Privacy</h3>
+        <p>No data is collected with the 2019 vote EU website, other than Google Analytics for website usage.</p>
+        <h3>Technology</h3>
+        <p><a href="https://d3js.org" target="_blank">D3.js</a> and <a href="https://svelte.dev" target="_blank">Svelte</a></p>
+        <h3>Credits</h3>
+        <p>
+          Concept & design:
+          <a
+            href="http://tulpinteractive.com"
+            title="TULP interactive"
+            target="_blank"
+          >
+            TULP interactive </a
+          >, created as a side project out of passion for data visualization.
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

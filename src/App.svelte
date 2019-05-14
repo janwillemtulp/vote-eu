@@ -16,8 +16,10 @@
   } from "./store.js";
   import Svg from "./Svg.svelte";
   import CountryButton from "./CountryButton.svelte";
+  // import CountrySelect from "./CountrySelect.svelte";
   import Question from "./Question.svelte";
   import PoliticalPosition from "./PoliticalPosition.svelte";
+  import Modal from './Modal.svelte';
 
   let innerWidth = 0;
   let innerHeight = 0;
@@ -261,12 +263,6 @@
     top: -32px;
   }
 
-  .info {
-    display: inline-block;
-    font-size: 11px;
-    margin-top: 3px;
-  }
-
   .party-list {
     overflow-y: auto;
     overflow-x: hidden;
@@ -279,6 +275,7 @@
     font-style: italic;
     margin-top: 3px;
   }
+ 
 </style>
 
 <svelte:window bind:innerWidth bind:innerHeight />
@@ -297,31 +294,21 @@
         {#if $selectedPartyIds.length > 1}
           <div class="overlap-diff overlap">
             <div>
-              <span class="label">same opinion</span>
+              <span class="label">same opinion in:</span>
               <span class="value">{overlap}</span>
-              {overlap === 1 ? 'statement' : 'statements'}
+              {overlap === 1 ? 'statement' : 'statements'} of {$activeQuestions.length}
               {`(${Math.round((overlap / $activeQuestions.length) * 100)}%)`}
-              <span class="info">
-                The number of statements for which the matching parties have the
-                <em>same</em>
-                opinion
-              </span>
             </div>
           </div>
           <div class="overlap-diff diff">
             <div>
               <span class="label">
                 <span>mixed</span>
-                opinions
+                opinions in:
               </span>
               <span class="value">{difference}</span>
-              {overlap === 1 ? 'statement' : 'statements'}
+              {overlap === 1 ? 'statement' : 'statements'} of {$activeQuestions.length}
               {`(${Math.round((difference / $activeQuestions.length) * 100)}%)`}
-              <span class="info">
-                The number of statements for which the matching parties have
-                <em>mixed</em>
-                opinions
-              </span>
             </div>
           </div>
         {/if}
@@ -330,20 +317,13 @@
           style="background-color: {$selectedPartyIds.length === 1 ? 'rgb(179, 219, 186)' : '#eee'};">
           {#if $selectedPartyIds.length > 1}
             <span class="label">
-              {$selectedPartyIds.length}
-              matching parties
-            </span>
-            <span class="info">
-              The parties that match your selection and have the same opinion for
-              {overlap}
-              {difference === 1 ? 'statement' : 'statements'}
-              .
+              {$selectedPartyIds.length} parties match your selection:
             </span>
           {/if}
           <div
             bind:this={partyList}
             class="party-list"
-            style="max-height: {innerHeight - 560}px">
+            style="max-height: {innerHeight - 460}px">
             {#each filteredParties as party}
               <div
                 class="matching-party"
@@ -377,6 +357,7 @@
       {#each $allCountries as country}
         <CountryButton {country} />
       {/each}
+      <!-- <CountrySelect /> -->
     </div>
 
     <div class="country">
@@ -409,6 +390,8 @@
     </div>
   </div>
 </header>
+
+<Modal />
 
 <footer>
   <div class="inner">

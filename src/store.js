@@ -36,9 +36,9 @@ const seats = {
 export const data = writable([])
 
 export const selectedCountry = writable({
-  code: 'NL',
-  name: 'The Netherlands',
-  seats: 26
+  code: 'AT',
+  name: 'Austria',
+  seats: 18
 })
 
 export const allCountries = derived(data, data =>
