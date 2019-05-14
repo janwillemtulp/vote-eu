@@ -5,27 +5,18 @@
     activeQuestions,
     allParties,
     selectedPartyIds,
-    opinions
+    opinions,
+    filteredParties,
+    overlap,
+    difference
   } from "./store.js";
   import Svg from "./Svg.svelte";
   import Question from "./Question.svelte";
+  import MatchingPartiesBar from "./MatchingPartiesBar.svelte"
 
   let innerWidth = 0;
   let innerHeight = 0;
   let partyList;
-
-  $: filteredParties = $allParties
-    .filter(d => $selectedPartyIds.includes(d.id))
-    .sort((a, b) =>
-      a.name_short < b.name_short ? -1 : a.name_short > b.name_short ? 1 : 0
-    );
-
-  $: overlap = $opinions.filter(d =>
-    $selectedPartyIds.every(p => d.parties.map(d => d.id).includes(p))
-  ).length;
-
-  $: difference = $activeQuestions.length - overlap;
-
   let isScrolling;
 
   afterUpdate(() => {
@@ -135,7 +126,7 @@
     }
   }
 
-  @media (min-width: 768px) {
+  @media (min-width: 768px) and (min-height: 414px) {
     main {
       grid-template-columns: 200px 1fr 200px;
     }
@@ -168,16 +159,16 @@
   <aside>
     {#if $selectedPartyIds.length > 0}
       <div class="inner" transition:fade={{ duration: 200 }}>
-        <h2>Matching part{difference === 0 ? 'y' : 'ies'}</h2>
+        <h2>Matching part{$difference === 0 ? 'y' : 'ies'}</h2>
         {#if $selectedPartyIds.length > 1}
           <div class="overlap-diff overlap">
             <div>
               <span class="label">same opinion in:</span>
-              <span class="value">{overlap}</span>
-              {overlap === 1 ? 'statement' : 'statements'}
+              <span class="value">{$overlap}</span>
+              {$overlap === 1 ? 'statement' : 'statements'}
               of
               {$activeQuestions.length}
-              {`(${Math.round((overlap / $activeQuestions.length) * 100)}%)`}
+              {`(${Math.round(($overlap / $activeQuestions.length) * 100)}%)`}
             </div>
           </div>
           <div class="overlap-diff diff">
@@ -186,11 +177,11 @@
                 <span>mixed</span>
                 opinions in:
               </span>
-              <span class="value">{difference}</span>
+              <span class="value">{$difference}</span>
               {overlap === 1 ? 'statement' : 'statements'}
               of
               {$activeQuestions.length}
-              {`(${Math.round((difference / $activeQuestions.length) * 100)}%)`}
+              {`(${Math.round(($difference / $activeQuestions.length) * 100)}%)`}
             </div>
           </div>
         {/if}
@@ -207,7 +198,7 @@
             bind:this={partyList}
             class="party-list"
             style="max-height: {innerHeight - 460}px">
-            {#each filteredParties as party}
+            {#each $filteredParties as party}
               <div
                 class="matching-party"
                 style="padding: {selectedPartyIds.length > 1 ? '0 0 10px 0' : '10px 0'};">
@@ -226,3 +217,5 @@
     {/if}
   </aside>
 </main>
+
+<MatchingPartiesBar />

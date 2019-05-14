@@ -5,7 +5,7 @@
 
 <style>
   header {
-    height: 160px;
+    /* height: 160px; */
     width: 100%;
     display: grid;
     grid-auto-columns: 1fr;
@@ -13,6 +13,7 @@
     background-color: white;
     position: fixed;
     top: 0;
+    padding: 10px 0;
   }
 
   .button-container {
@@ -41,13 +42,13 @@
     display: inline-block;
     text-align: center;
     font-weight: bold;
-    font-size: 12px;
+    font-size: 11px;
     font-family: "Libre Baskerville", serif;
   }
 
   .country h1 {
     position: relative;
-    margin-bottom: 0;
+    margin: 0;
   }
 
   .country .byline {
@@ -75,9 +76,10 @@
   }
 
   .logo {
-    max-width: 100px;
-    margin: 10px;
-    justify-self: center;
+    max-width: 70px;
+    margin: 0 10px;
+    justify-self: start;
+    align-self: start;
   }
 
   .bigger {
@@ -108,7 +110,7 @@
     }
   }
 
-  @media (min-width: 768px) {
+  @media (min-width: 768px) and (min-height: 414px) {
     .container-headers {
       grid-template-columns: 200px 1fr 1fr 1fr 1fr 200px;
     }

@@ -21,7 +21,6 @@
       ? innerWidth - 210
       : innerWidth - 400
     : 540;
-  $: console.log(containerWidth, innerWidth);
 
   $: xc = scaleOrdinal()
     .domain([100, 50, 0, null])
@@ -87,6 +86,10 @@
   );
 
   function showPopup(info, e) {
+    if (e.sourceCapabilities.firesTouchEvents) {
+      return;
+    }
+
     hoverParty = info;
     hover = { question: info.question, answer: info.answer };
   }
@@ -120,7 +123,6 @@
   }
 
   afterUpdate(() => {
-    console.log("after update");
     resize();
   });
 </script>
@@ -178,7 +180,7 @@
 <svelte:window bind:innerWidth />
 
 <div>
-  <svg width={containerWidth} height={22 * 2 * rowHeight + 22}>
+  <svg width={Math.min(containerWidth, 540)} height={22 * 2 * rowHeight + 22}>
     <g>
       {#each $opinions as opinion}
         <rect
