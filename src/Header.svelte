@@ -1,11 +1,10 @@
 <script>
   import { allCountries, selectedCountry, selectedPartyIds } from "./store.js";
-  import CountryButton from "./CountryButton.svelte";
+  import CountrySelect from "./CountrySelect.svelte";
 </script>
 
 <style>
   header {
-    /* height: 160px; */
     width: 100%;
     display: grid;
     grid-auto-columns: 1fr;
@@ -13,12 +12,7 @@
     background-color: white;
     position: fixed;
     top: 0;
-    padding: 10px 0;
-  }
-
-  .button-container {
-    display: none;
-    grid-template-columns: repeat(auto-fit, minmax(1px, 1fr));
+    padding: 10px 0 10px 0;
   }
 
   .clear-selection {
@@ -54,7 +48,7 @@
   .country .byline {
     font-size: 14px;
     font-family: "Source Sans Pro", sans-serif;
-    margin-top: 0;
+    margin: 0;
   }
 
   .container-headers {
@@ -69,25 +63,33 @@
     grid-template-columns: 200px 1fr;
     justify-items: start;
     align-items: center;
-  }
-
-  .container-headers:nth-child(even) {
-    background-color: orange;
+    margin-bottom: 10px;
   }
 
   .logo {
-    max-width: 70px;
-    margin: 0 10px;
     justify-self: start;
     align-self: start;
+    width: 80%;
+    object-fit: cover;
+    margin-left: 10px;
   }
 
   .bigger {
     display: none;
   }
 
+  .bigger.country-select {
+    margin-right: 10px;
+    justify-self: end;
+  }
+
   .smaller {
     display: block;
+  }
+
+  .smaller.country-select {
+    justify-self: start;
+    margin-left: 10px;
   }
 
   @media (min-width: 414px) {
@@ -115,8 +117,12 @@
       grid-template-columns: 200px 1fr 1fr 1fr 1fr 200px;
     }
 
-    .button-container {
-      display: grid;
+    .country-container {
+      grid-template-columns: 200px 1fr 200px;
+    }
+
+    header {
+      padding: 30px 0 10px 0;
     }
   }
 
@@ -133,21 +139,20 @@
 
 <header>
   <div>
-    <div class="button-container">
-      {#each $allCountries as country}
-        <CountryButton {country} />
-      {/each}
-      <!-- <CountrySelect /> -->
-    </div>
-
     <div class="country-container">
-      <img class="logo" src="img/logo.png" alt="2019 vote EU" />
+      <!-- <img class="logo" src="img/logo.png" alt="2019 vote EU" /> -->
+      <div>YOUR LOGO HERE
+        <div class="smaller country-select"><CountrySelect /></div>
+      </div>
       <div class="country">
         <h1> {$selectedCountry.name}</h1>
         <p class="byline">
           <em>{$selectedCountry.seats} seats</em>
           in EU parliament
         </p>
+      </div>
+      <div class="bigger country-select">
+        <CountrySelect />
       </div>
     </div>
 

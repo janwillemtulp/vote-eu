@@ -58,6 +58,6 @@
 
 <Header />
 
-<Modal />
+<!-- <Modal /> -->
 
 <Footer />

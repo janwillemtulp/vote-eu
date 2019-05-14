@@ -1,8 +1,9 @@
 <script>
-  import { allCountries, selectedCountry } from "./store.js";
-  
+  import { allCountries, selectedCountry, selectedPartyIds } from "./store.js";
+
   function setSelectedCountry(country) {
     $selectedCountry = $allCountries.find(d => d.code === country);
+    $selectedPartyIds = [];
   }
 </script>
 
