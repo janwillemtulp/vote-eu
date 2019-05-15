@@ -17,7 +17,7 @@
 
 <style>
   p {
-    height: 120px;
+    height: 85px;
     margin: 0 10px 0 10px;
     text-align: right;
     font-weight: normal;

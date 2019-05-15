@@ -33,11 +33,6 @@
     box-shadow: 20px 20px 20px rgba(0, 0, 0, 0.2);
   }
 
-  .content p {
-    font-size: 16px;
-    line-height: 26px;
-  }
-
   button {
     background-color: hsl(224, 80%, 32%);
     color: hsl(46, 92%, 62%);
@@ -57,7 +52,21 @@
     object-fit: cover;
     width: 100%;
     padding-bottom: 5px;
-    max-width: 200px;
+    max-width: 110px;
+  }
+
+  h2 {
+    margin: 0;
+  }
+
+  ol {
+    padding: 0 20px;
+  }
+
+  @media (min-width: 768px) {
+    .logo {
+      max-width: 200px;
+    }
   }
 </style>
 
@@ -67,9 +76,14 @@
       <img class="logo" src="img/logo.png" alt="2019 vote EU" />
       <h2>Vote matching, but the other way around</h2>
     </div>
-    <p>
-      For any of the statements, click on Agree, Neutral, Disagree or No Opinion to explore similarities and differences between political parties and you!
-    </p>
+    <ol>
+      <li>Give your opinion on any of 22 policy statements</li>
+      <li>This will eliminate parties that don't share your opinion</li>
+      <li>
+        All the opinions that the remaining parties share are automatically marked as well
+      </li>
+      <li>You can only give opinions that are shared by political parties</li>
+    </ol>
     <div style="text-align: right;">
       <CountrySelect />
       <button on:click={() => closeModal()}>start</button>

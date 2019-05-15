@@ -1,5 +1,5 @@
 <script>
-  import { fade } from "svelte/transition";
+  import { fade, fly } from "svelte/transition";
   import { afterUpdate } from "svelte";
   import {
     activeQuestions,
@@ -12,7 +12,7 @@
   } from "./store.js";
   import Svg from "./Svg.svelte";
   import Question from "./Question.svelte";
-  import MatchingPartiesBar from "./MatchingPartiesBar.svelte"
+  import MatchingPartiesBar from "./MatchingPartiesBar.svelte";
 
   let innerWidth = 0;
   let innerHeight = 0;
@@ -91,7 +91,8 @@
     display: none;
   }
 
-  .overlap-diff .value {
+  .overlap-diff .value,
+  .matching-parties .label span {
     font-family: "Libre Baskerville", serif;
     font-size: 20px;
   }
@@ -190,7 +191,7 @@
           style="background-color: {$selectedPartyIds.length === 1 ? 'rgb(179, 219, 186)' : '#eee'};">
           {#if $selectedPartyIds.length > 1}
             <span class="label">
-              {$selectedPartyIds.length}
+              <span>{$selectedPartyIds.length}</span>
               parties match your selection:
             </span>
           {/if}

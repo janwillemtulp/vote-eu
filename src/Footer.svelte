@@ -23,6 +23,11 @@
 
   a {
     margin: 0 5px;
+    border-bottom: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
   }
 
   .links {
@@ -41,9 +46,6 @@
   .about {
     margin-left: 5px;
     justify-self: start;
-  }
-
-  .privacy {
   }
 
   @media (min-width: 940px) {

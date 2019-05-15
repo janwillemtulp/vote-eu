@@ -3,7 +3,8 @@
     overlap,
     difference,
     filteredParties,
-    selectedPartyIds
+    selectedPartyIds,
+    activeQuestions
   } from "./store.js";
 </script>
 
@@ -61,8 +62,13 @@
     align-self: end;
   }
 
+  .multi-match .value span {
+    font-size: 14px;
+    font-family: "Source Sans Pro", sans-serif;
+  }
+
   .multi-match {
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
     border-top: 1px solid #ddd;
   }
 
@@ -90,19 +96,17 @@
     class="container {$selectedPartyIds.length === 1 ? 'single-match' : 'multi-match'}">
     {#if $selectedPartyIds.length > 1}
       <div class="grid-item">
-        <div class="label">matching parties:</div>
+        <div class="label">parties matching your selection:</div>
         <span class="value">{$filteredParties.length}</span>
       </div>
       <div class="grid-item">
-        <div class="label">same opinion:</div>
-        <span class="value">{$overlap}</span>
-      </div>
-      <div class="grid-item">
-        <div class="label">
-          <span class="marked">mixed</span>
-          opinions:
-        </div>
-        <span class="value">{$difference}</span>
+        <div class="label">statements with same opinion:</div>
+        <span class="value">
+          {$overlap}
+          <span>
+            {`(${Math.round(($overlap / $activeQuestions.length) * 100)}%)`}
+          </span>
+        </span>
       </div>
     {:else}
       <span class="label grid-item">matching party:</span>

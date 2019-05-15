@@ -1,5 +1,6 @@
 <script>
   import { afterUpdate } from "svelte";
+  import { fade } from "svelte/transition";
   import { opinions, allParties, selectedPartyIds } from "./store.js";
   import { scaleOrdinal, scaleLinear } from "d3-scale";
   import { extent } from "d3-array";
@@ -7,7 +8,7 @@
   import { mouse, select } from "d3-selection";
   import { color } from "d3-color";
 
-  let rowHeight = 60;
+  let rowHeight = 85;
   let barWidth = 540 / 4 / 15;
   let answerWidth = 540 / 4;
   let hoverParty;
@@ -16,6 +17,7 @@
   let popupHeight;
   let innerWidth;
   export let containerHeight;
+
   $: containerWidth = innerWidth
     ? innerWidth < 768
       ? innerWidth - 210
@@ -28,16 +30,9 @@
 
   $: y = scaleLinear()
     .domain(extent($opinions.map(d => d.question.id)))
-    .range([0, 21 * rowHeight * 2]);
+    .range([0, 21 * rowHeight * 1]);
 
-  $: xOffset = block => {
-    // if (block.answer.simplifiedValue === 100) {
-    // return answerWidth - barWidth - block.parties.length * barWidth;
-    // } else if (block.answer.simplifiedValue === 50) {
-    return answerWidth / 2 - (block.parties.length * barWidth) / 2;
-    // }
-    // return barWidth;
-  };
+  $: xOffset = block => answerWidth / 2 - (block.parties.length * barWidth) / 2;
 
   function filterOpinionsByParty(party) {
     return $opinions.filter(d => d.parties.map(d => d.id).includes(party.id));
@@ -65,8 +60,6 @@
 
     if ($selectedPartyIds.length === 0) {
       $selectedPartyIds = partyIds;
-    } else if ($selectedPartyIds.every(d => partyIds.includes(d))) {
-      $selectedPartyIds = $selectedPartyIds.filter(d => !partyIds.includes(d));
     } else if ($selectedPartyIds.some(d => partyIds.includes(d))) {
       $selectedPartyIds = $selectedPartyIds.filter(d => partyIds.includes(d));
     } else {
@@ -77,27 +70,6 @@
   $: includesSelectedPartyIds = opinion =>
     $selectedPartyIds.length > 0 &&
     $selectedPartyIds.every(d => opinion.parties.map(p => p.id).includes(d));
-
-  $: selectedPartiePaths = $allParties.filter(d =>
-    $selectedPartyIds.includes(d.id)
-  );
-  $: nonSelectedPartiePaths = $allParties.filter(
-    d => !$selectedPartyIds.includes(d.id)
-  );
-
-  function showPopup(info, e) {
-    if (e.sourceCapabilities.firesTouchEvents) {
-      return;
-    }
-
-    hoverParty = info;
-    hover = { question: info.question, answer: info.answer };
-  }
-
-  function hidePopup() {
-    hoverParty = undefined;
-    hover = undefined;
-  }
 
   $: popupLeft = () =>
     !mousePos
@@ -122,25 +94,18 @@
     }
   }
 
+  $: console.log($opinions);
+
   afterUpdate(() => {
     resize();
   });
 </script>
 
 <style>
-  .answer {
+  .answer rect {
     fill: #eee;
     stroke: #fff;
     stroke-width: 2;
-  }
-
-  .answer:hover {
-    fill: #ddd;
-    cursor: pointer;
-  }
-
-  .party-answer:hover {
-    cursor: pointer;
   }
 
   .popup {
@@ -155,113 +120,69 @@
     display: none;
   }
 
-  .popup h2 {
-    margin: 3px 0;
+  .hoverable {
+    cursor: pointer;
+  }
+
+  .answer.hoverable:hover {
+    opacity: 0.6;
+  }
+
+  .answer-label {
+    text-anchor: middle;
+    dominant-baseline: middle;
     font-family: "Libre Baskerville", serif;
+    font-size: 11px;
+    display: none;
   }
 
-  .popup h4 {
-    margin: 3px 0;
-    font-family: "Source Sans Pro", sans-serif;
-    font-weight: normal;
-  }
-
-  path {
-    pointer-events: none;
-  }
-
-  /* @media (min-width: 940px) {
-    .popup {
+  @media (min-width: 540px) {
+    .answer-label {
+      font-size: 14px;
       display: block;
     }
-  } */
+  }
+
+  @media (min-width: 940px) {
+    .answer-label {
+      font-size: 18px;
+    }
+  }
 </style>
 
 <svelte:window bind:innerWidth />
 
 <div>
-  <svg width={Math.min(containerWidth, 540)} height={22 * 2 * rowHeight + 22}>
+  <svg width={Math.min(containerWidth, 540)} height={22 * 1 * rowHeight + 22}>
     <g>
       {#each $opinions as opinion}
-        <rect
-          x={xc(opinion.answer.simplifiedValue)}
-          y={y(opinion.question.id)}
-          width={answerWidth}
-          height={rowHeight}
-          on:click={() => updateSelectedPartyIds(opinion)}
-          on:mouseover={() => {
-            hover = opinion;
-          }}
-          on:mouseout={() => {
-            hover = undefined;
-          }}
-          class="answer"
-          style="fill: {hover && hover.question.id === opinion.question.id && hover.answer.simplifiedValue === opinion.answer.simplifiedValue ? color(includesSelectedPartyIds(opinion) ? opinion.answer.colorLight : '#eee')
-                .darker(0.5)
-                .rgb() : color(includesSelectedPartyIds(opinion) ? opinion.answer.colorLight : '#eee')}; " />
-      {/each}
-
-      {#each nonSelectedPartiePaths as party}
-        <path
-          transform="translate({barWidth / 2}, {rowHeight})"
-          d={getPath(party.id, filterOpinionsByParty(party).reduce((acc, cur) => acc.concat(
-                  [cur, cur, cur]
-                ), []))}
-          style="fill: none; stroke: rgba(0, 0, 0, 0.2); stroke-dasharray: 2 2;" />
-      {/each}
-
-      {#each selectedPartiePaths as party}
-        <path
-          transform="translate({barWidth / 2}, {rowHeight})"
-          d={getPath(party.id, filterOpinionsByParty(party).reduce((acc, cur) => acc.concat(
-                  [cur, cur, cur]
-                ), []))}
-          style="fill: none; stroke: #000; stroke-dasharray: none;" />
-      {/each}
-
-      {#each $opinions as opinion}
-        <g
-          transform="translate({xc(opinion.answer.simplifiedValue)}, {y(opinion.question.id)})">
-          {#each opinion.parties as party, i}
+        {#if $selectedPartyIds.length === 0 || opinion.parties
+            .map(d => d.id)
+            .some(d => $selectedPartyIds.includes(d))}
+          <g
+            transition:fade={{ duration: 200 }}
+            class="answer {!includesSelectedPartyIds(opinion) ? 'hoverable' : ''}"
+            on:click={() => updateSelectedPartyIds(opinion)}>
             <rect
-              x={xOffset(opinion) + i * barWidth}
-              y={rowHeight / 4}
-              width={barWidth}
-              height={rowHeight / 2}
-              style="fill: {$selectedPartyIds.includes(party.id) ? opinion.answer.color : opinion.answer.colorLight}; stroke: {containerWidth < 368 ? ($selectedPartyIds.includes(party.id) ? opinion.answer.color : opinion.answer.color) : 'black'}"
-              class="party-answer"
-              on:click={() => updateSelectedPartyIds(opinion)}
-              on:mousemove={e => (mousePos = [e.clientX, e.offsetY, e.clientY])}
-              on:mouseover={e => showPopup({ party, ...opinion }, e)}
-              on:mouseout={() => hidePopup()} />
-          {/each}
-        </g>
+              x={xc(opinion.answer.simplifiedValue)}
+              y={y(opinion.question.id)}
+              width={answerWidth}
+              height={rowHeight}
+              style="fill: {includesSelectedPartyIds(opinion) ? opinion.answer.color : '#eee'}" />
+            {#if !includesSelectedPartyIds(opinion)}
+              <text
+                x={xc(opinion.answer.simplifiedValue)}
+                y={y(opinion.question.id)}
+                dx={answerWidth / 2}
+                dy={rowHeight / 2}
+                class="answer-label"
+                style="fill: #ccc;">
+                {opinion.answer.label}
+              </text>
+            {/if}
+          </g>
+        {/if}
       {/each}
     </g>
   </svg>
-  {#if mousePos}
-    <div
-      class="popup"
-      style="display: {hoverParty ? 'block' : 'none'}; left: {popupLeft()}px; top: {mousePos[1]}; margin-top: {popupMarginTop()}px;"
-      bind:clientHeight={popupHeight}>
-      {#if hoverParty}
-        <h2>{hoverParty.party.name_short}</h2>
-        <h4>{hoverParty.party.name_full}</h4>
-        <h4 style="color: {hoverParty.answer.color}">
-          {hoverParty.answer.label}
-        </h4>
-        <p>
-          <em>Motivation:</em>
-          {hoverParty.parties.find(d => d.id === hoverParty.party.id).motivation.text}
-        </p>
-        <p>
-          <em>source:</em>
-          <a
-            href={hoverParty.parties.find(d => d.id === hoverParty.party.id).motivation.link}>
-            {hoverParty.parties.find(d => d.id === hoverParty.party.id).motivation.source}
-          </a>
-        </p>
-      {/if}
-    </div>
-  {/if}
 </div>

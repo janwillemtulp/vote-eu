@@ -70,6 +70,8 @@ answerLabels.set(50, "Neutral");
 answerLabels.set(0, "Disagree");
 answerLabels.set(null, "No opinion");
 
+export const mySelection = writable([]);
+
 export const opinions = derived(activeData, activeData =>
   activeData.reduce((acc, cur) => {
     const existing = acc.find(

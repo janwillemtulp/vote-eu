@@ -1,6 +1,7 @@
 <script>
   import { allCountries, selectedCountry, selectedPartyIds } from "./store.js";
   import CountrySelect from "./CountrySelect.svelte";
+  import { fly } from "svelte/transition";
 </script>
 
 <style>
@@ -23,13 +24,15 @@
     padding: 0;
     border-radius: 40px;
     border: none;
-    background-color: #ddd;
+    background-color: hsl(221, 85%, 31%);
     margin: 0 10px 0 0;
+    color: white;
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.5);
   }
 
   .clear-selection:hover {
     cursor: pointer;
-    background-color: #ccc;
+    background-color: hsl(221, 85%, 21%);
   }
 
   .opinion-label {
@@ -186,13 +189,17 @@
     </div>
 
     <div class="container-headers">
-      <button
-        on:click={() => ($selectedPartyIds = [])}
-        style="visibility: {$selectedPartyIds.length > 0 ? 'visible' : 'hidden'};"
-        class="clear-selection">
-        <i class="fas fa-times-circle" />
-        clear selection
-      </button>
+      <div style="height: 26px; text-align: right;">
+        {#if $selectedPartyIds.length > 0}
+          <button
+            transition:fly={{ x: -200, duration: 300 }}
+            on:click={() => ($selectedPartyIds = [])}
+            class="clear-selection">
+            <i class="fas fa-times-circle" />
+            clear selection
+          </button>
+        {/if}
+      </div>
       <div class="opinion-label bigger" style="color: hsl(200, 50%, 50%);">
         Agree
       </div>
