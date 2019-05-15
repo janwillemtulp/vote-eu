@@ -1,38 +1,6 @@
 import { writable, derived, readable } from "svelte/store";
 import { rollup } from "d3-array";
 
-// from Wikipedia, assuming the UK won't leave before the elections
-// const seats = {
-//   DE: 96,
-//   FR: 74,
-//   UK: 73,
-//   IT: 73,
-//   SP: 54,
-//   PL: 51,
-//   RO: 32,
-//   NL: 26,
-//   BE: 21,
-//   CZ: 21,
-//   EL: 21,
-//   HU: 21,
-//   PT: 21,
-//   SE: 20,
-//   AT: 18,
-//   BG: 17,
-//   DK: 13,
-//   FI: 13,
-//   SK: 13,
-//   IE: 11,
-//   HR: 11,
-//   LT: 11,
-//   LV: 8,
-//   SI: 8,
-//   EE: 6,
-//   CY: 6,
-//   LU: 6,
-//   MT: 6
-// };
-
 export const data = writable([]);
 
 export const allCountries = readable([
@@ -115,15 +83,6 @@ export const opinions = derived(activeData, activeData =>
           id: cur.question_id,
           shared_id: cur.question_shared_id,
           text: cur.question
-          // economic_liberalisation: cur.economic_liberalisation,
-          // environmental_protection: cur.environmental_protection,
-          // european_integration: cur.european_integration,
-          // law_and_order: cur.law_and_order,
-          // liberal_society: cur.liberal_society,
-          // restrictive_financial_policy: cur.restrictive_financial_policy,
-          // restrictive_immigration_policy: cur.restrictive_immigration_policy,
-          // xy_lc: cur.xy_lc,
-          // xy_lr: cur.xy_lr
         },
         answer: {
           value: cur.answer,
