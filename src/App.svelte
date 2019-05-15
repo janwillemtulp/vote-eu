@@ -1,14 +1,14 @@
 <script>
   import { csv } from "d3-fetch";
   import { data } from "./store.js";
-  import { loadData } from './common.js'
+  import { loadData } from "./common.js";
   import Modal from "./Modal.svelte";
   import Header from "./Header.svelte";
   import Main from "./Main.svelte";
   import Footer from "./Footer.svelte";
 
-  let promise = loadData('UK')
-  console.log(promise)
+  let promise = loadData("AT");
+
   // let promise = loadData();
 
   // const parse = attribute => (attribute === "" ? null : +attribute);
@@ -53,14 +53,12 @@
 {#await promise}
   <p>...loading data</p>
 {:then}
-<Main />
+  <Main />
 
-<Header />
-
+  <Header />
 {:catch error}
   <p style="color: red;">{error.message}</p>
 {/await}
 
 <!-- <Modal /> -->
 <Footer />
-

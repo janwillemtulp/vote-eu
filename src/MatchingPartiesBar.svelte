@@ -66,12 +66,16 @@
     border-top: 1px solid #ddd;
   }
 
-  h3, p {
+  h3,
+  p {
     margin: 0;
     text-align: left;
   }
 
   @media (min-width: 414px) {
+    .single-match {
+      grid-template-columns: 200px 1fr;
+    }
   }
 
   @media (min-width: 768px) and (min-height: 414px) {

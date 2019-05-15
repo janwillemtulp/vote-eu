@@ -43,6 +43,8 @@
   .country h1 {
     position: relative;
     margin: 0;
+    font-size: 24px;
+    white-space: normal;
   }
 
   .country .byline {
@@ -74,22 +76,30 @@
     margin-left: 10px;
   }
 
+  .logo-container {
+    align-self: end;
+    justify-self: end;
+    margin-right: 10px;
+  }
+
   .bigger {
     display: none;
   }
 
-  .bigger.country-select {
+  .right-country-select {
     margin-right: 10px;
     justify-self: end;
+    display: none;
   }
 
   .smaller {
     display: block;
   }
 
-  .smaller.country-select {
+  .left-country-select {
     justify-self: start;
     margin-left: 10px;
+    display: block;
   }
 
   @media (min-width: 414px) {
@@ -101,14 +111,30 @@
       display: block;
     }
 
+    .country h1 {
+      white-space: nowrap;
+    }
+
     .country .byline {
       font-size: 16px;
     }
   }
 
   @media (min-width: 540px) {
+    .country-container {
+      grid-template-columns: 200px 1fr 200px;
+    }
+
     .opinion-label {
       font-size: 14px;
+    }
+
+    .left-country-select {
+      display: none;
+    }
+
+    .right-country-select {
+      display: block;
     }
   }
 
@@ -117,9 +143,9 @@
       grid-template-columns: 200px 1fr 1fr 1fr 1fr 200px;
     }
 
-    .country-container {
+    /* .country-container {
       grid-template-columns: 200px 1fr 200px;
-    }
+    } */
 
     header {
       padding: 30px 0 10px 0;
@@ -141,8 +167,11 @@
   <div>
     <div class="country-container">
       <!-- <img class="logo" src="img/logo.png" alt="2019 vote EU" /> -->
-      <div>YOUR LOGO HERE
-        <div class="smaller country-select"><CountrySelect /></div>
+      <div class="logo-container">
+        YOUR LOGO HERE
+        <div class="left-country-select">
+          <CountrySelect />
+        </div>
       </div>
       <div class="country">
         <h1> {$selectedCountry.name}</h1>
@@ -151,7 +180,7 @@
           in EU parliament
         </p>
       </div>
-      <div class="bigger country-select">
+      <div class="right-country-select">
         <CountrySelect />
       </div>
     </div>
