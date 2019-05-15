@@ -15,19 +15,22 @@
   .inner {
     width: 100%;
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 200px 1fr;
     justify-content: right;
     align-items: center;
     height: 30px;
+  }
+
+  a {
+    margin: 0 5px;
+  }
+
+  .links {
     text-align: right;
   }
 
   .inner p {
     margin: 0;
-  }
-
-  .smaller {
-    display: none;
   }
 
   .tulp-interactive {
@@ -40,10 +43,7 @@
     justify-self: start;
   }
 
-  @media (min-width: 540px) {
-    .smaller {
-      display: inline;
-    }
+  .privacy {
   }
 
   @media (min-width: 940px) {
@@ -56,17 +56,31 @@
 <footer>
   <div class="inner">
     <p>
-      <span class="smaller">concept & design</span>
       by
-      <a class="tulp-interactive"
+      <a
+        class="tulp-interactive"
         href="http://tulpinteractive.com"
         title="TULP interactive"
         target="_blank">
-        <span>TULP</span> interactive
+        <span>TULP</span>
+        interactive
       </a>
     </p>
-    <a class="about" href="about.html" target="_blank" title="about 2019 vote EU">
-      about 2019 vote EU
-    </a>
+    <div class="links">
+      <a
+        class="about"
+        href="about.html"
+        target="_blank"
+        title="about 2019 vote EU">
+        about
+      </a>
+      <a
+        class="privacy"
+        href="privacy-statement.html"
+        target="_blank"
+        title="privacy statement">
+        privacy
+      </a>
+    </div>
   </div>
 </footer>
