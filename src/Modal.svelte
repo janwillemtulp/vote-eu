@@ -33,10 +33,6 @@
     box-shadow: 20px 20px 20px rgba(0, 0, 0, 0.2);
   }
 
-  .content h2 {
-    margin: 0 40px;
-  }
-
   .content p {
     font-size: 16px;
     line-height: 26px;
@@ -61,12 +57,13 @@
     object-fit: cover;
     width: 100%;
     padding-bottom: 5px;
+    max-width: 200px;
   }
 </style>
 
 <div class="modal" bind:this={modal}>
   <div class="content">
-    <div style="display: grid; grid-template-columns: 1fr 5fr; align-items: end;">
+    <div style="display: grid; grid-template-rows: 1fr 1fr; align-items: end;">
       <img class="logo" src="img/logo.png" alt="2019 vote EU" />
       <h2>Vote matching, but the other way around</h2>
     </div>
