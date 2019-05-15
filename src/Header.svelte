@@ -73,13 +73,14 @@
     align-self: start;
     width: 80%;
     object-fit: cover;
-    margin-left: 10px;
+    margin: 10px;
   }
 
   .logo-container {
     align-self: end;
     justify-self: end;
     margin-right: 10px;
+    text-align: right;
   }
 
   .bigger {
@@ -166,9 +167,8 @@
 <header>
   <div>
     <div class="country-container">
-      <!-- <img class="logo" src="img/logo.png" alt="2019 vote EU" /> -->
       <div class="logo-container">
-        YOUR LOGO HERE
+        <img src="img/logo.png" alt="2019 vote EU" class="logo" />
         <div class="left-country-select">
           <CountrySelect />
         </div>
