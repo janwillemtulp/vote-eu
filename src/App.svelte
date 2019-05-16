@@ -6,7 +6,7 @@
   import Main from "./Main.svelte";
   import Footer from "./Footer.svelte";
 
-  let promise = loadData("AT");
+  let promise = loadData("NL");
 </script>
 
 {#await promise}
@@ -19,5 +19,5 @@
   <p style="color: red;">{error.message}</p>
 {/await}
 
-<Modal />
+<!-- <Modal /> -->
 <Footer />

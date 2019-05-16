@@ -17,7 +17,7 @@
 
 <style>
   p {
-    height: 85px;
+    height: 100px;
     margin: 0 10px 0 10px;
     text-align: right;
     font-weight: normal;
@@ -34,6 +34,6 @@
   style="color: {marked() ? answerValuesRemaining()[0].answer.color : 'black'};">
   <span
     style="padding: 0 0 0 4px; background-color: {marked() || $selectedPartyIds.length === 0 ? 'transparent' : 'hsla(46, 92%, 75%, 1)'};">
-    {question.text}
+     {question.text}
   </span>
 </p>

@@ -1,6 +1,7 @@
 <script>
   import { allCountries, selectedCountry, selectedPartyIds } from "./store.js";
   import CountrySelect from "./CountrySelect.svelte";
+  import DistributionToggle from "./DistributionToggle.svelte";
   import { fly } from "svelte/transition";
 </script>
 
@@ -174,6 +175,7 @@
         <img src="img/logo.png" alt="2019 vote EU" class="logo" />
         <div class="left-country-select">
           <CountrySelect />
+          <DistributionToggle />
         </div>
       </div>
       <div class="country">
@@ -185,6 +187,7 @@
       </div>
       <div class="right-country-select">
         <CountrySelect />
+        <DistributionToggle />
       </div>
     </div>
 

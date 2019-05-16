@@ -31,7 +31,7 @@
     display: grid;
     grid-template-columns: 200px 1fr;
     justify-content: center;
-    margin-top: 160px;
+    margin-top: 190px;
     padding-bottom: 100px;
   }
 
@@ -127,6 +127,12 @@
     }
   }
 
+  @media (min-width: 414px) {
+    main {
+      margin-top: 160px;
+    }
+  }
+
   @media (min-width: 768px) and (min-height: 414px) {
     main {
       grid-template-columns: 200px 1fr 200px;
@@ -166,9 +172,7 @@
             <div>
               <span class="label">same opinion in:</span>
               <span class="value">{$overlap}</span>
-              {$overlap === 1 ? 'statement' : 'statements'}
-              of
-              {$activeQuestions.length}
+               {$overlap === 1 ? 'statement' : 'statements'} of {$activeQuestions.length}
               {`(${Math.round(($overlap / $activeQuestions.length) * 100)}%)`}
             </div>
           </div>
@@ -179,10 +183,9 @@
                 opinions in:
               </span>
               <span class="value">{$difference}</span>
-              {overlap === 1 ? 'statement' : 'statements'}
-              of
-              {$activeQuestions.length}
+               {overlap === 1 ? 'statement' : 'statements'} of {$activeQuestions.length}
               {`(${Math.round(($difference / $activeQuestions.length) * 100)}%)`}
+
             </div>
           </div>
         {/if}
