@@ -6,7 +6,8 @@
     opinions,
     allParties,
     selectedPartyIds,
-    showDistributions
+    showDistributions,
+    hoverPartyId
   } from "./store.js";
   import { scaleOrdinal, scaleLinear } from "d3-scale";
   import { extent } from "d3-array";
@@ -23,6 +24,8 @@
   let mousePos;
   let popupHeight;
   let innerWidth;
+  let innerHeight;
+  // let hoverPartyId = null;
   export let containerHeight;
 
   $: containerWidth = innerWidth
@@ -130,7 +133,6 @@
     }
   }
 
-  $: console.log($opinions);
   $: filteredOpinionParties = opinion =>
     opinion.parties.filter(
       d => $selectedPartyIds.length === 0 || $selectedPartyIds.includes(d.id)
@@ -140,7 +142,13 @@
     resize();
   });
 
-  function scaleToZero(node, { duration = 200, x }) {
+  function isTouchDevice() {
+    return (
+      !!("ontouchstart" in window) || !!("onmsgesturechange" in window) // works on most browsers
+    ); // works on ie10
+  }
+
+  function scaleToZero(node, { duration = 0, x }) {
     const n = select(node);
 
     return {
@@ -153,6 +161,22 @@
       }
     };
   }
+
+  $: pathStyle = (party, e) => `
+    fill: none; 
+    stroke: ${
+      party.id === $hoverPartyId ||
+      (party.id === $hoverPartyId && $selectedPartyIds.length > 0)
+        ? "#000"
+        : "rgba(0, 0, 0, 0.35)"
+    };  
+    stroke-width: ${party.id === $hoverPartyId ? 2 : 1};
+    stroke-dasharray: ${
+      party.id === $hoverPartyId || $selectedPartyIds.length > 0
+        ? "none"
+        : "2 2"
+    };
+  `;
 </script>
 
 <style>
@@ -190,6 +214,14 @@
     display: none;
   }
 
+  .party-answer {
+    cursor: pointer;
+  }
+
+  path {
+    pointer-events: none;
+  }
+
   @media (min-width: 540px) {
     .answer-label {
       font-size: 14px;
@@ -204,7 +236,7 @@
   }
 </style>
 
-<svelte:window bind:innerWidth />
+<svelte:window bind:innerWidth bind:innerHeight />
 
 <div>
   <svg width={Math.min(containerWidth, 540)} height={22 * 1 * rowHeight + 22}>
@@ -214,7 +246,7 @@
             .map(d => d.id)
             .some(d => $selectedPartyIds.includes(d))}
           <g
-            transition:fade={{ duration: 200 }}
+            transition:fade={{ duration: 0 }}
             class="answer {!includesSelectedPartyIds(opinion) ? 'hoverable' : ''}"
             on:click={() => updateSelectedPartyIds(opinion)}>
             <rect
@@ -231,34 +263,34 @@
                 dy={rowHeight / 2}
                 class="answer-label"
                 style="fill: #ccc;">
-                 {opinion.answer.label}
+                {opinion.answer.label}
               </text>
             {/if}
+            }
           </g>
         {/if}
       {/each}
 
       {#if $showDistributions}
-        {#if $selectedPartyIds.length === 0}
+        <!-- {#if $selectedPartyIds.length === 0}
           {#each nonSelectedPartyPaths as party}
             <path
               transform="translate({barWidth / 2}, {rowHeight})"
               d={getPath(party.id, filterOpinionsByParty(party).reduce((acc, cur) => acc.concat(
                       [cur, cur, cur]
                     ), []))}
-              style="fill: none; stroke: rgba(0, 0, 0, 0.2); stroke-dasharray: 2
-              2;" />
+              style="fill: none; stroke: rgba(0, 0, 0, 0.2); stroke-dasharray: 2 2;" />
           {/each}
-        {/if}
+        {/if} -->
 
-        {#each selectedPartyPaths as party}
+        {#each $selectedPartyIds.length === 0 ? nonSelectedPartyPaths : selectedPartyPaths as party}
           <path
-            transition:fade={{ duration: 200 }}
+            transition:fade={{ duration: 0 }}
             transform="translate({barWidth / 2}, {rowHeight})"
             d={getPath(party.id, filterOpinionsByParty(party).reduce((acc, cur) => acc.concat(
                     [cur, cur, cur]
                   ), []))}
-            style="fill: none; stroke: #000; stroke-dasharray: none;" />
+            style={pathStyle(party)} />
         {/each}
 
         {#each $opinions as opinion}
@@ -266,20 +298,35 @@
             transform="translate({xc(opinion.answer.simplifiedValue)}, {y(opinion.question.id)})">
             {#each filteredOpinionParties(opinion) as party, i}
               <rect
+                on:click={() => updateSelectedPartyIds(opinion)}
+                on:mouseover={e => (isTouchDevice() ? ($hoverPartyId = null) : ($hoverPartyId = party.id))}
+                on:mouseout={() => ($hoverPartyId = null)}
                 out:scaleToZero={{ x: xOffset(opinion) + i * barWidth }}
                 x={xOffset(opinion) + i * barWidth}
                 y={rowHeight / 2 - rowHeight / 4 / 2}
                 width={barWidth}
                 height={rowHeight / 4}
-                style="fill: {$selectedPartyIds.includes(party.id) ? opinion.answer.color : opinion.answer.colorLight};
-                stroke: {containerWidth < 368 ? ($selectedPartyIds.includes(party.id) ? opinion.answer.color : opinion.answer.color) : 'black'}"
-                class="party-answer"
-                on:click={() => updateSelectedPartyIds(opinion)} />
+                style="fill: {$selectedPartyIds.includes(party.id) ? opinion.answer.color : opinion.answer.colorLight}; stroke: {containerWidth < 368 ? ($selectedPartyIds.includes(party.id) ? opinion.answer.color : opinion.answer.color) : 'black'}"
+                class="party-answer" />
+              {#if party && party.id === $hoverPartyId}
+                <text
+                  dx={xOffset(opinion) + i * barWidth}
+                  dy={30}
+                  style="text-anchor: middle; fill: {includesSelectedPartyIds(opinion) ? opinion.answer.colorLight : '#eee'}; stroke: {includesSelectedPartyIds(opinion) ? opinion.answer.colorLight : '#eee'}; stroke-width: 7;">
+                  {party.name_short}
+                </text>
+                <text
+                  dx={xOffset(opinion) + i * barWidth}
+                  dy={30}
+                  style="text-anchor: middle;">
+                  {party.name_short}
+                </text>
+              {/if}
             {/each}
           </g>
         {/each}
 
-        {#each $opinions as opinion}
+        <!-- {#each $opinions as opinion}
           {#if $selectedPartyIds.length === 0 || opinion.parties
               .map(d => d.id)
               .some(d => $selectedPartyIds.includes(d))}
@@ -295,7 +342,7 @@
                 style="fill: transparent; stroke: none;" />
             </g>
           {/if}
-        {/each}
+        {/each} -->
       {/if}
     </g>
   </svg>

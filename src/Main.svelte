@@ -172,7 +172,9 @@
             <div>
               <span class="label">same opinion in:</span>
               <span class="value">{$overlap}</span>
-               {$overlap === 1 ? 'statement' : 'statements'} of {$activeQuestions.length}
+              {$overlap === 1 ? 'statement' : 'statements'}
+              of
+              {$activeQuestions.length}
               {`(${Math.round(($overlap / $activeQuestions.length) * 100)}%)`}
             </div>
           </div>
@@ -183,9 +185,10 @@
                 opinions in:
               </span>
               <span class="value">{$difference}</span>
-               {overlap === 1 ? 'statement' : 'statements'} of {$activeQuestions.length}
+              {overlap === 1 ? 'statement' : 'statements'}
+              of
+              {$activeQuestions.length}
               {`(${Math.round(($difference / $activeQuestions.length) * 100)}%)`}
-
             </div>
           </div>
         {/if}

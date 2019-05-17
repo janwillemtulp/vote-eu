@@ -72,7 +72,7 @@
   }
 </style>
 
-<div style="text-align: right; display: flex;">
+<div style="text-align: right; display: flex; justify-content: flex-end;">
   party opinions:
   <label class="switch">
     <input
