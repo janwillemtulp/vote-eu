@@ -70,15 +70,9 @@
   .slider.round:before {
     border-radius: 50%;
   }
-
-  @media (min-width: 768px) {
-    label {
-      top: -16px;
-    }
-  }
 </style>
 
-<div style="text-align: right;">
+<div style="text-align: right; display: flex;">
   party opinions:
   <label class="switch">
     <input
