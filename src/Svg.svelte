@@ -310,13 +310,13 @@
                 class="party-answer" />
               {#if party && party.id === $hoverPartyId}
                 <text
-                  dx={xOffset(opinion) + i * barWidth}
+                  dx={xOffset(opinion) + (i * barWidth) + (barWidth / 2)}
                   dy={30}
                   style="text-anchor: middle; fill: {includesSelectedPartyIds(opinion) ? opinion.answer.colorLight : '#eee'}; stroke: {includesSelectedPartyIds(opinion) ? opinion.answer.colorLight : '#eee'}; stroke-width: 7;">
                   {party.name_short}
                 </text>
                 <text
-                  dx={xOffset(opinion) + i * barWidth}
+                  dx={xOffset(opinion) + (i * barWidth) + (barWidth / 2)}
                   dy={30}
                   style="text-anchor: middle;">
                   {party.name_short}
